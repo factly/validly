@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "validator"
+name = "validly"
 version = "0.1.0"
 description = "Validations on datasets"
 authors = ["Somitra"]

@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "validator"
+version = "0.1.0"
+description = "Validations on datasets"
+authors = ["Somitra"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.71.0"
+great-expectations = "^0.14.0"
+uvicorn = "^0.16.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+isort = "^5.9.3"
+black = "^21.9b0"
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+   .eggs
+  | .git
+  | .venv
+  | .cache
+  | __pycache__
+  | _build
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

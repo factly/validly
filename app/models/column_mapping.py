@@ -40,4 +40,4 @@ class AllMappedColumns(BaseModel):
 
 
 class ObjectColumns(BaseModel):
-    object_columns : List[str]
+    object_columns: List[str]

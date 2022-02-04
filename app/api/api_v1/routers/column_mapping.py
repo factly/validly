@@ -6,8 +6,8 @@ from app.models.column_mapping import (
     DateTimeColumns,
     GeographyColumns,
     NoteColumns,
+    ObjectColumns,
     UnitColumns,
-    ObjectColumns
 )
 from app.utils.column_mapping import (
     find_datetime_columns,
@@ -92,8 +92,8 @@ async def get_note_columns(
 @router.get(
     "/object",
     response_model=ObjectColumns,
-    response_model_exclude_none= True,
-    summary= "Provide column with str type values"
+    response_model_exclude_none=True,
+    summary="Provide column with str type values",
 )
 async def get_object_columns(
     source: str = settings.EXAMPLE_URL,

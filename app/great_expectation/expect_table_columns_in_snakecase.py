@@ -1,70 +1,54 @@
-import json
 import re
 
-# This class defines a Metric to support your Expectation
-# For most Expectations, the main business logic for calculation will live here.
-# To learn about the relationship between Metrics and Expectations, please visit
-# https://docs.greatexpectations.io/en/latest/reference/core_concepts.html#expectations-and-metrics.
+# This class defines a Metric to support \
+# your Expectation
+# For most Expectations, the main business logic \
+# for calculation will live here.
+# To learn about the relationship between Metrics\
+# and Expectations, please visit
+# https://docs.greatexpectations.io/en/latest/reference/core_concepts.html#expectations-and-metrics
 from typing import Any, Dict, Optional, Tuple
 
-import numpy as np
 from great_expectations.core import ExpectationConfiguration
 
-#!!! This giant block of imports should be something simpler, such as:
+# This giant block of imports should be something simpler, such as:
 # from great_expectations.helpers.expectation_creation import *
-from great_expectations.exceptions import InvalidExpectationConfigurationError
 from great_expectations.execution_engine import (
     ExecutionEngine,
     PandasExecutionEngine,
-    SparkDFExecutionEngine,
 )
-from great_expectations.execution_engine.sqlalchemy_execution_engine import (
-    SqlAlchemyExecutionEngine,
-)
-from great_expectations.expectations.expectation import (
-    ColumnMapExpectation,
-    Expectation,
-    ExpectationConfiguration,
-    TableExpectation,
-)
-from great_expectations.expectations.metrics import (
-    ColumnMapMetricProvider,
-    column_condition_partial,
-)
+from great_expectations.expectations.expectation import TableExpectation
 from great_expectations.expectations.metrics.metric_provider import (
     metric_value,
 )
 from great_expectations.expectations.metrics.table_metric_provider import (
     TableMetricProvider,
 )
-from great_expectations.expectations.registry import (
-    _registered_expectations,
-    _registered_metrics,
-    _registered_renderers,
-)
 from great_expectations.expectations.util import (
     render_evaluation_parameter_string,
 )
 from great_expectations.render.renderer.renderer import renderer
 from great_expectations.render.types import RenderedStringTemplateContent
-from great_expectations.render.util import (
-    num_to_str,
-    substitute_none_for_missing,
-)
+from great_expectations.render.util import substitute_none_for_missing
 from great_expectations.validator.validation_graph import MetricConfiguration
-from great_expectations.validator.validator import Validator
 
 TEXT_SNAKE_CASE_PATTERN = re.compile(r"^[a-z0-9]+([_a-z0-9]+)*$")
 
-# This class defines the Metric, a class used by the Expectation to compute important data for validating itself
+
+# This class defines the Metric, a class used by the \
+# Expectation to compute important data for validating itself
 class TableSnakecaseColumnNames(TableMetricProvider):
 
-    # This is a built in metric - you do not have to implement it yourself. If you would like to use
-    # a metric that does not yet exist, you can use the template below to implement it!
+    # This is a built in metric - you do not have to implement\
+    # it yourself. If you would like to use
+    # a metric that does not yet exist, you can use the \
+    # template below to implement it!
     metric_name = "table.snakecase_column_names"
 
-    # Below are metric computations for different dialects (Pandas, SqlAlchemy, Spark)
-    # They can be used to compute the table data you will need to validate your Expectation
+    # Below are metric computations for different dialects \
+    # (Pandas, SqlAlchemy, Spark)
+    # They can be used to compute the table data you will need \
+    # to validate your Expectation
     @metric_value(engine=PandasExecutionEngine)
     def _pandas(
         cls,
@@ -75,7 +59,8 @@ class TableSnakecaseColumnNames(TableMetricProvider):
         runtime_configuration: Dict,
     ):
         columns = metrics.get("table.columns")
-        # For each column, testing if alphabetical and returning number of alphabetical columns
+        # For each column, testing if alphabetical and returning\
+        # number of alphabetical columns
         snake_case_columns = len(
             list(
                 filter(
@@ -108,8 +93,8 @@ class TableSnakecaseColumnNames(TableMetricProvider):
 class ExpectTableColumnsInSnakecase(TableExpectation):
     """TODO: add a docstring here"""
 
-    # These examples will be shown in the public gallery, and also executed as unit tests for your Expectation
-    # These examples will be shown in the public gallery, and also executed as unit tests for your Expectation
+    # These examples will be shown in the public gallery, \
+    # and also executed as unit tests for your Expectation
     # examples = [
     #     {
     #         "data": {
@@ -135,16 +120,11 @@ class ExpectTableColumnsInSnakecase(TableExpectation):
 
     # This dictionary contains metadata for display in the public gallery
     library_metadata = {
-        "maturity": "experimental",  # "experimental", "beta", or "production"
-        "tags": [  # Tags for this Expectation in the gallery
-            #         "experimental"
-        ],
-        "contributors": [  # Github handles for all contributors to this Expectation.
-            #         "@your_name_here", # Don't forget to add your github handle here!
-        ],
+        "maturity": "experimental",
+        "tags": [],
+        "contributors": [],
         "package": "experimental_expectations",
     }
-
     metric_dependencies = ("table.snakecase_column_names",)
     success_keys = ()
 
@@ -160,18 +140,23 @@ class ExpectTableColumnsInSnakecase(TableExpectation):
         self, configuration: Optional[ExpectationConfiguration]
     ):
         """
-        Validates that a configuration has been set, and sets a configuration if it has yet to be set. Ensures that
-        necessary configuration arguments have been provided for the validation of the expectation.
+        Validates that a configuration has been set, and sets a \
+            configuration if it has yet to be set. Ensures that
+        necessary configuration arguments have been provided for \
+            the validation of the expectation.
         Args:
             configuration (OPTIONAL[ExpectationConfiguration]): \
-                An optional Expectation Configuration entry that will be used to configure the expectation
+                An optional Expectation Configuration entry that \
+                    will be used to configure the expectation
         Returns:
-            True if the configuration has been validated successfully. Otherwise, raises an exception
+            True if the configuration has been validated successfully. \
+                Otherwise, raises an exception
         """
 
         #     # Setting up a configuration
         # try:
-        #     assert "user_input" in configuration.kwargs, "user_input is required"
+        #     assert "user_input" in configuration.kwargs
+        # # "user_input is required"
         #     assert isinstance(
         #         configuration.kwargs["user_input"], str
         #     ), "user_input must be a string"
@@ -208,7 +193,8 @@ class ExpectTableColumnsInSnakecase(TableExpectation):
             )
         ]
 
-    # This method will utilize the computed metric to validate that your Expectation about the Table is true
+    # This method will utilize the computed metric to validate that your \
+    # Expectation about the Table is true
     def _validate(
         self,
         configuration: ExpectationConfiguration,

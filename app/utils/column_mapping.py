@@ -1,6 +1,5 @@
 import re
-from platform import architecture
-from typing import List
+from itertools import chain
 
 from app.core.config import (
     DateTimeSettings,
@@ -8,8 +7,6 @@ from app.core.config import (
     NoteSettings,
     UnitSettings,
 )
-from itertools import chain
-
 
 datetime_settings = DateTimeSettings()
 geography_settings = GeographySettings()
@@ -102,11 +99,11 @@ async def find_note_columns(columns: set):
         "note": note_column,
     }
 
+
 async def find_object_columns(dataset):
-    object_columns = list(dataset.select_dtypes(include=['object']).columns)
-    return {
-        "object_columns" : object_columns
-    }
+    object_columns = list(dataset.select_dtypes(include=["object"]).columns)
+    return {"object_columns": object_columns}
+
 
 async def find_mapped_columns(columns):
     datetime_columns = await find_datetime_columns(columns)
@@ -119,8 +116,9 @@ async def find_mapped_columns(columns):
         **unit_columns,
         **note_columns,
     }
-    not_mapped_columns = list(set(columns).difference(list(chain.from_iterable(mapped_columns.values()))))
-    return {
-        **mapped_columns,
-        "unmapped": not_mapped_columns
-    }
+    not_mapped_columns = list(
+        set(columns).difference(
+            list(chain.from_iterable(mapped_columns.values()))
+        )
+    )
+    return {**mapped_columns, "unmapped": not_mapped_columns}

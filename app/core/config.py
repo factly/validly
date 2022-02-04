@@ -11,9 +11,16 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     MODE: str = "development"
     DOCS_URL: str = "/api/docs"
-    EXAMPLE_URL: str = "https://storage.factly.org/mande/mospi/data/processed/2018/agriculture/mospi_8_3_consolidated.csv"
-    EXAMPLE_URL_COUNTRY: str = "https://storage.factly.org/mande/edu-ministry/data/processed/statistics/1_AISHE_report/19_enrolment_foreign/output.csv"
-    EXAMPLE_URL_STATE: str = "https://storage.factly.org/mande/edu-ministry/data/processed/statistics/1_AISHE_report/1_universities_count_by_state/output.csv"
+    EXAMPLE_URL: str = """https://storage.factly.org/mande/mospi/\
+        data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
+    EXAMPLE_URL_COUNTRY: str = """
+    https://storage.factly.org/mande/\
+        edu-ministry/data/processed/statistics/1_AISHE_report/19_enrolment_foreign/output.csv
+    """
+    EXAMPLE_URL_STATE: str = """
+    https://storage.factly.org/mande/edu-ministry/data/processed/\
+        statistics/1_AISHE_report/1_universities_count_by_state/output.csv
+    """
 
     class Config:
         env_file = ".env"

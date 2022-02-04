@@ -25,7 +25,8 @@ async def non_calender_year_proper_format(dataset, result_format):
     results = {}
     # get all date time columns present inside datasets
     datetime_columns = await find_datetime_columns(set(dataset.columns))
-    # get all those columns corresponding to non-calender year (Fiscal Year, Academic_year)
+    # get all those columns corresponding to non-calender year\
+    # (Fiscal Year, Academic_year)
     for each_column in datetime_columns["non_calendar_year"]:
         expectation = dataset.expect_column_values_to_match_regex(
             column=each_column,

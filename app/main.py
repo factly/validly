@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 
-from app.api.api_v1.routers.column import column_router
 from app.api.api_v1.routers.column_mapping import column_mapper_router
 from app.api.api_v1.routers.datetime import datetime_router
 from app.api.api_v1.routers.geography import geographic_router
@@ -22,9 +21,13 @@ app.include_router(
     column_mapper_router, prefix="/columns", tags=["Columns Mapped"]
 )
 
-app.include_router(datetime_router, prefix="/columns/datetime", tags=["Date & Time"])
+app.include_router(
+    datetime_router, prefix="/columns/datetime", tags=["Date & Time"]
+)
 
-app.include_router(geographic_router, prefix="/columns/geography", tags=["Geography"])
+app.include_router(
+    geographic_router, prefix="/columns/geography", tags=["Geography"]
+)
 
 app.include_router(unit_router, prefix="/columns/unit", tags=["Unit Column"])
 

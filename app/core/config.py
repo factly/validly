@@ -13,20 +13,20 @@ class Settings(BaseSettings):
     MODE: str = "development"
     DOCS_URL: str = "/api/docs"
     EXAMPLE_URL: str = """https://storage.factly.org/mande/mospi/\
-    data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
+data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
     EXAMPLE_URL_COUNTRY: str = """https://storage.factly.org/mande/\
 edu-ministry/data/processed/statistics/1_AISHE_report/19_enrolment_foreign/output.csv"""
     EXAMPLE_URL_STATE: str = """https://storage.factly.org/mande/edu-ministry/data/\
 processed/statistics/1_AISHE_report/1_universities_count_by_state/output.csv"""
     EXAMPLE_URL_QUARTER: str = """/Users/somitragupta/factly/factly-datasets/\
-        projects/rbi/data/processed/1_timeseries/9_quarterly-bsr-1-outstanding\
-            -credit-of-scheduled-commercial-banks/qbsr1-outcredit-acctype/output.csv"""
+projects/rbi/data/processed/1_timeseries/9_quarterly-bsr-1-outstanding\
+-credit-of-scheduled-commercial-banks/qbsr1-outcredit-acctype/output.csv"""
     EXAMPLE_URL_MONTH: str = """/Users/somitragupta/factly/factly-datasets/\
-        projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-\
-            on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
+projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-\
+on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     EXAMPLE_URL_DATE: str = """/Users/somitragupta/factly/factly-datasets\
-        /projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on\
-            -the-indian-economy/hbs-mb-scb-select-aggregates-weekly/output.csv"""
+/projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on\
+-the-indian-economy/hbs-mb-scb-select-aggregates-weekly/output.csv"""
 
     class Config:
         env_file = ".env"

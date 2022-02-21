@@ -1,3 +1,6 @@
+import asyncio
+from collections import ChainMap
+
 import great_expectations as ge
 
 from app.core.config import APP_DIR, GeographySettings
@@ -82,7 +85,9 @@ async def country_expectation_suite(dataset, result_format):
 
 
 async def geography_expectation_suite(dataset, result_format):
-    results = []
-    results.append(await country_expectation_suite(dataset, result_format))
-    results.append(await state_expectation_suite(dataset, result_format))
-    return [result for result in results if result]
+    expectations = await asyncio.gather(
+        country_expectation_suite(dataset, result_format),
+        state_expectation_suite(dataset, result_format),
+    )
+    expectations = ChainMap(*expectations)
+    return expectations

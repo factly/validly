@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.api_v1.routers.column_mapping import column_mapper_router
+from app.api.api_v1.routers.dataset import dataset_router
 from app.api.api_v1.routers.datetime import datetime_router
 from app.api.api_v1.routers.general import general_router
 from app.api.api_v1.routers.geography import geographic_router
@@ -18,6 +19,8 @@ async def root():
     return {"message": "Server is up"}
 
 
+app.include_router(dataset_router, prefix="", tags=["Compare Datasets"])
+
 app.include_router(
     column_mapper_router, prefix="/columns", tags=["Columns Mapped"]
 )
@@ -34,6 +37,6 @@ app.include_router(unit_router, prefix="/columns/unit", tags=["Unit Column"])
 
 app.include_router(note_router, prefix="/columns/note", tags=["Note Column"])
 
-app.include_router(general_router, prefix="/table/general", tags=["Table"])
+app.include_router(general_router, prefix="/table", tags=["Table"])
 
 # app.include_router(column_router, prefix="/column", tags=["Column"])

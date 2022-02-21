@@ -1,3 +1,5 @@
+import asyncio
+
 import great_expectations as ge
 
 from app.expectations.custom_expectations import GenericCustomExpectations
@@ -61,3 +63,15 @@ async def bracket_values_expectatio_suite(dataset, result_format):
         result_format=result_format,
     )
     return expectation
+
+
+async def general_table_expectation_suite(dataset, result_format):
+    expectations = await asyncio.gather(
+        duplicates_expectation_suite(dataset, result_format),
+        leading_trailing_whitespace_expectation_suite(dataset, result_format),
+        multispaces_between_text_expectation_suite(dataset, result_format),
+        bracket_values_expectatio_suite(dataset, result_format),
+        special_character_expectation_suite(dataset, result_format),
+    )
+    expectations = [expectation.to_json_dict() for expectation in expectations]
+    return expectations

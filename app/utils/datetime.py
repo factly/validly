@@ -1,3 +1,6 @@
+import asyncio
+from collections import ChainMap
+
 import great_expectations as ge
 
 from app.core.config import DateTimeSettings
@@ -179,32 +182,12 @@ async def date_expectation_suite(dataset, result_format):
 
 
 async def datetime_expectation_suite(dataset, result_format):
-    results = []
-    results.append(
-        await calendar_year_expectation_suite(
-            dataset,
-            result_format,
-        )
+    expectations = await asyncio.gather(
+        calendar_year_expectation_suite(dataset, result_format),
+        non_calendar_year_expectation_suite(dataset, result_format),
+        quarter_expectation_suite(dataset, result_format),
+        month_expectation_suite(dataset, result_format),
+        date_expectation_suite(dataset, result_format),
     )
-    results.append(
-        await non_calendar_year_expectation_suite(dataset, result_format)
-    )
-    results.append(
-        await quarter_expectation_suite(
-            dataset,
-            result_format,
-        )
-    )
-    results.append(
-        await month_expectation_suite(
-            dataset,
-            result_format,
-        )
-    )
-    results.append(
-        await date_expectation_suite(
-            dataset,
-            result_format,
-        )
-    )
-    return [result for result in results if result]
+    expectations = ChainMap(*expectations)
+    return expectations

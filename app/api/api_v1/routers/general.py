@@ -6,6 +6,7 @@ from app.utils.common import read_dataset
 from app.utils.general import (
     bracket_values_expectatio_suite,
     duplicates_expectation_suite,
+    general_table_expectation_suite,
     leading_trailing_whitespace_expectation_suite,
     multispaces_between_text_expectation_suite,
     special_character_expectation_suite,
@@ -85,3 +86,16 @@ async def execute_bracket_values_expectatio_suite(
     dataset = await read_dataset(source)
     expectation = await bracket_values_expectatio_suite(dataset, result_type)
     return expectation.to_json_dict()
+
+
+@router.get(
+    "/expectations",
+    summary="Run expectation on table",
+)
+async def execute_general_table_expectation_suite(
+    result_type: ExpectationResultType,
+    source: str = settings.EXAMPLE_URL,
+):
+    dataset = await read_dataset(source)
+    expectation = await general_table_expectation_suite(dataset, result_type)
+    return expectation

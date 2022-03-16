@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import great_expectations as ge
+from fastapi.encoders import jsonable_encoder
 
 from app.core.config import NoteSettings
 from app.utils.column_mapping import find_note_columns
@@ -39,4 +40,4 @@ async def note_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)

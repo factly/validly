@@ -49,7 +49,10 @@ class ExceptionInfo(BaseModel):
 
 class Expectation(BaseModel):
     success: bool
-    expectation_config: Optional[ExpectationConfig]
+    _expectation_config: Optional[ExpectationConfig]
     result: Optional[Result]
     meta: Optional[Dict[str, Any]]
-    exception_info: Optional[ExceptionInfo]
+    _exception_info: Optional[ExceptionInfo]
+
+    class Config:
+        underscore_attrs_are_private = True

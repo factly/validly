@@ -2,6 +2,7 @@ import asyncio
 from collections import ChainMap
 
 import great_expectations as ge
+from fastapi.encoders import jsonable_encoder
 
 from app.core.config import APP_DIR, GeographySettings
 from app.utils.column_mapping import find_geography_columns
@@ -42,7 +43,7 @@ async def state_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def modify_country_expectation_suite(
@@ -81,7 +82,7 @@ async def country_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def geography_expectation_suite(dataset, result_format):

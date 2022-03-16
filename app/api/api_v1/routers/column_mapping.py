@@ -21,6 +21,7 @@ from app.utils.column_mapping import (
 )
 from app.utils.common import read_dataset
 from app.utils.datetime import datetime_expectation_suite
+from app.utils.general import general_table_expectation_suite
 from app.utils.geography import geography_expectation_suite
 from app.utils.note import note_expectation_suite
 from app.utils.unit import unit_expectation_suite
@@ -111,6 +112,7 @@ async def execute_column_expectations(
         geography_expectation_suite(dataset, result_format),
         unit_expectation_suite(dataset, result_format),
         note_expectation_suite(dataset, result_format),
+        general_table_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
     return expectations

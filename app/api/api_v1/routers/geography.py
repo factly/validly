@@ -1,7 +1,10 @@
+from typing import Dict
+
 from fastapi import APIRouter
 
 from app.core.config import Settings
 from app.models.enums import ExpectationResultType
+from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
 from app.utils.common import read_dataset
 from app.utils.geography import (
     country_expectation_suite,
@@ -15,8 +18,8 @@ geographic_router = router = APIRouter()
 
 @router.get(
     "/country/expectations",
-    # response_model=Dict[str, ColumnValuesToBeInSet],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, ColumnValuesToBeInSet],
+    response_model_exclude_none=True,
     summary="Expected to have Proper Naming Convention for Countries",
 )
 async def execute_country_expectation_suite(
@@ -30,8 +33,8 @@ async def execute_country_expectation_suite(
 
 @router.get(
     "/state/expectations",
-    # response_model=Dict[str, ColumnValuesToBeInSet],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, ColumnValuesToBeInSet],
+    response_model_exclude_none=True,
     summary="Expected to have Proper Naming Convention for State",
 )
 async def execute_state_expectation_suite(

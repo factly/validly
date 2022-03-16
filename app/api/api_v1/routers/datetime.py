@@ -1,7 +1,11 @@
+from typing import Dict, Union
+
 from fastapi import APIRouter
 
 from app.core.config import DateTimeSettings, Settings
+from app.models.date_strftime_pattern import DateStrftimePattern
 from app.models.enums import ExpectationResultType
+from app.models.regex_pattern import RegexPatternExpectation
 from app.utils.common import read_pandas_dataset
 from app.utils.datetime import (
     calendar_year_expectation_suite,
@@ -19,8 +23,9 @@ datetime_router = router = APIRouter()
 
 @router.get(
     "/calendar-year/expectations",
-    # response_model=Dict[str, DateStrftimePattern],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, RegexPatternExpectation],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     summary="Suitability of calender year columns",
 )
 async def execute_calendar_year_expectation_suite(
@@ -34,8 +39,9 @@ async def execute_calendar_year_expectation_suite(
 
 @router.get(
     "/non-calendar-year/expectations",
-    # response_model=Dict[str, RegexPatternExpectation],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, RegexPatternExpectation],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     summary="Suitability of non-calender year columns",
 )
 async def execute_non_calendar_year_expectation_suite(
@@ -51,8 +57,9 @@ async def execute_non_calendar_year_expectation_suite(
 
 @router.get(
     "/quarter/expectations",
-    # response_model=Dict[str, RegexPatternExpectation],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, RegexPatternExpectation],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     summary="Suitable Expectations for quarter columns",
 )
 async def execute_quarter_expectation_suite(
@@ -66,8 +73,9 @@ async def execute_quarter_expectation_suite(
 
 @router.get(
     "/month/expectations",
-    # response_model=Dict[str, DateStrftimePattern],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, DateStrftimePattern],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     summary="Suitable Expectations for month columns",
 )
 async def execute_month_expectation_suite(
@@ -81,8 +89,9 @@ async def execute_month_expectation_suite(
 
 @router.get(
     "/date/expectations",
-    # response_model=Dict[str, DateStrftimePattern],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, DateStrftimePattern],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
     summary="Suitable Expectations for date columns",
 )
 async def execute_date_expectation_suite(
@@ -96,6 +105,10 @@ async def execute_date_expectation_suite(
 
 @router.get(
     "/expectations",
+    response_model=Dict[
+        str, Union[RegexPatternExpectation, DateStrftimePattern]
+    ],
+    response_model_exclude_none=False,
     summary="Expectations on all date columns",
 )
 async def execute_datetime_expectation_columns(

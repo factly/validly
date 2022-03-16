@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     MODE: str = "development"
     DOCS_URL: str = "/api/docs"
+    EXAMPLE_FOLDER: str = "/Users/somitragupta/factly/news-room-datasets"
     EXAMPLE_URL: str = """https://storage.factly.org/mande/mospi/\
 data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
     EXAMPLE_URL_COUNTRY: str = """https://storage.factly.org/mande/\

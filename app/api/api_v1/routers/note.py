@@ -1,7 +1,10 @@
+from typing import Dict
+
 from fastapi import APIRouter
 
 from app.core.config import Settings
 from app.models.enums import ExpectationResultType
+from app.models.regex_list_pattern import RegexMatchList
 from app.utils.common import read_dataset
 from app.utils.note import note_expectation_suite
 
@@ -12,8 +15,9 @@ note_router = router = APIRouter()
 @router.get(
     "/expectations",
     summary="Expected to have note column in proper format",
-    # response_model=Dict[str, RegexMatchList],
-    # response_model_exclude_none=True,
+    response_model=Dict[str, RegexMatchList],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
 )
 async def execute_note_expectation_suite(
     result_type: ExpectationResultType,

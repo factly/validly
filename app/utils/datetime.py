@@ -2,6 +2,7 @@ import asyncio
 from collections import ChainMap
 
 import great_expectations as ge
+from fastapi.encoders import jsonable_encoder
 
 from app.core.config import DateTimeSettings
 from app.utils.column_mapping import find_datetime_columns
@@ -45,7 +46,7 @@ async def calendar_year_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def modify_non_calendar_year_expectation_suite(
@@ -80,7 +81,7 @@ async def non_calendar_year_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def modify_quarter_expectation_suite(
@@ -114,7 +115,7 @@ async def quarter_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def modify_month_expectation_suite(column_name: str, result_format: str):
@@ -146,7 +147,7 @@ async def month_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def modify_date_expectation_suite(column_name: str, result_format: str):
@@ -178,7 +179,7 @@ async def date_expectation_suite(dataset, result_format):
         )
         results[each_column] = ge_pandas_dataset.validate()
 
-    return results
+    return jsonable_encoder(results)
 
 
 async def datetime_expectation_suite(dataset, result_format):

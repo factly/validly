@@ -13,8 +13,11 @@ class Settings(BaseSettings):
     MODE: str = "development"
     DOCS_URL: str = "/api/docs"
     EXAMPLE_FOLDER: str = "/Users/somitragupta/factly/news-room-datasets"
-    EXAMPLE_URL: str = """https://storage.factly.org/mande/mospi/\
-data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
+    EXAMPLE_URL: str = "/Users/somitragupta/factly/factly-datasets/projects/rbi/\
+data/processed/1_timeseries/5_handbook-of-statistics-on-the-indian-economy/\
+hbs-mb-scb-select-aggregates-weekly/output.csv"
+    #     EXAMPLE_URL: str = """https://storage.factly.org/mande/mospi/\
+    # data/processed/2018/agriculture/mospi_8_3_consolidated.csv"""
     EXAMPLE_URL_COUNTRY: str = """https://storage.factly.org/mande/\
 edu-ministry/data/processed/statistics/1_AISHE_report/19_enrolment_foreign/output.csv"""
     EXAMPLE_URL_STATE: str = """https://storage.factly.org/mande/edu-ministry/data/\
@@ -28,6 +31,14 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     EXAMPLE_URL_DATE: str = """/Users/somitragupta/factly/factly-datasets\
 /projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on\
 -the-indian-economy/hbs-mb-scb-select-aggregates-weekly/output.csv"""
+    # /Users/somitragupta/factly/factly-datasets/projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on-the-indian-economy/hbs-mb-scb-select-aggregates-weekly/output.csv
+    # /Users/somitragupta/factly/factly-datasets/projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv
+    # S3 (MINIO) PARAMS
+    S3_ENDPOINT: str = "localhost:9000"
+    S3_BUCKET: str = "validly"
+    S3_KEY: str = "minio"
+    S3_SECRET: str = "password"
+    S3_SECURE: bool = False
 
     class Config:
         env_file = ".env"

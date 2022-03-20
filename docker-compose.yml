@@ -4,20 +4,56 @@ services:
   ##########################################################################
   ######                       TOOL SERVER                           #######
   ##########################################################################
-  validly-server:
+  # validly-server:
+  #   ports:
+  #     - 8000:8000
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   command: >
+  #     /bin/sh -c "
+  #     uvicorn app.main:app --reload --host 0.0.0.0;
+  #     "
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - validly
+
+
+  ###########################################################################
+  #######                        MINIO                                #######
+  ###########################################################################
+  minio:
+    image: minio/minio
     ports:
-      - 8000:8000
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: >
-      /bin/sh -c "
-      uvicorn app.main:app --reload --host 0.0.0.0;
-      "
-    env_file:
-      - .env
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./volumes/minio/data:/export
+      - ./volumes/minio/config:/root/.minio
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=password
     networks:
       - validly
+    command: server --console-address :9001 /export
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+    networks:
+      - validly
+    entrypoint: >
+      /bin/sh -c "  
+      minio:9000 -- echo 'Minio is up. Creating the bucket!!';
+      /usr/bin/mc config host add myminio http://minio:9000 minio password;
+      /usr/bin/mc mb myminio/validly;
+      /usr/bin/mc policy set download myminio/validly;
+      exit 0;
+      "
 
 networks:
   validly:

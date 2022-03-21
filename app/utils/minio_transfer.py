@@ -6,6 +6,7 @@ from fastapi.logger import logger
 from minio import Minio
 
 from app.core.config import Settings
+from app.utils.common import slugify
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,7 +23,7 @@ async def _upload_file_to_minio_folder(
     try:
         minio_client.put_object(
             bucket_name=bucket_name,
-            object_name=f"{folder_name}/{filename}",
+            object_name=f"{folder_name}/{slugify(filename)}",
             data=upload_file_object.file,
             length=-1,
             content_type=upload_file_object.content_type,
@@ -38,6 +39,9 @@ async def _upload_file_to_minio_folder(
 
 async def upload_local_file_to_bucket(upload_file_objects):
     # Create client with access and secret key.
+    if not isinstance(upload_file_objects, list):
+        upload_file_objects = [upload_file_objects]
+
     try:
         client = Minio(
             endpoint=settings.S3_ENDPOINT,
@@ -92,6 +96,7 @@ async def get_files_inside_folder(folder_name: str):
                 settings.S3_BUCKET, prefix=folder_name, recursive=True
             )
         ]
+        logger.info(file_keys)
     except Exception as e:
         # raise exception if error happened
         raise Exception(f"Could not get files inside folder: {e}")

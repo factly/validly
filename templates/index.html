@@ -6,19 +6,31 @@
     <div class="container">
         <div class="jumbotron">
             <h1> Validly </h1>
-            <p> Perform Validations on datasets
-                <p>
+            <p>
+                Perform Validations on datasets
+            </p>
         </div>
         <div class="container">
             <p>
                 <label for="dataset_files">Select Files(csv)</label>
                 <input class="btn btn-warning" type="file" id="dataset_files" name="myfile" multiple>
             </p>
-            <!-- <p>
+            <p>
+                <label for="result_type">Result Type:</label>
+                <select name="result_type" id="result_type" onchange="getSelectedResultType();">
+                    <option value="BOOLEAN_ONLY">BOOLEAN_ONLY</option>
+                    <option value="BASIC">BASIC</option>
+                    <option value="SUMMARY">SUMMARY</option>
+                    <option value="COMPLETE">COMPLETE</option>
+                </select>
+            </p>
+        </div>
+
+
+        <!-- <p>
                 <label for="dataset_folder">Select Folder</label>
                 <input type="file" webkitdirectory directory multiple>
             </p> -->
-        </div>
         <br>
         <button class="btn btn-success" onclick="ExecuteValidation()"> Validate Dataset </button>
         <br>
@@ -32,29 +44,31 @@
     function ExecuteValidation() {
         var files = document.getElementById("dataset_files").files
         var formData = new FormData();
-        var endpoint = "/expectation/datasets/";
+        var endpoint = "/expectation/datasets/?result_type=SUMMARY";
 
         console.log(files);
-        // inititate a blank array to store file paths
-        var file_paths_array = [];
-        formData.append("result_type", "SUMMARY");
-        formData.append("datasets", files);
 
-        for (var key of formData.entries()) {
-            console.log(key[0] + ', ' + key[1]);
+        for (var i = 0; i < files.length; i++) {
+
+            formData.append("datasets", files[i]);
         }
+        // formData.append("datasets", files[0]);
 
         $.ajax({
             type: "POST",
             url: endpoint,
             data: formData,
+            // contentType: "multipart/form-data",
             contentType: false,
             processData: false,
             success: function(data) {
-                for (const item in data) {
-                    console.log(item)
-                }
+                console.log(data)
             }
         });
+    }
+</script>
+<script>
+    function getSelectedResultType() {
+        var selectedResultType = document.getElementById("result_type").value;
     }
 </script>

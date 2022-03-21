@@ -4,10 +4,15 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
-from app.core.config import APP_DIR, GeographySettings
+from app.core.config import APP_DIR, GeographySettings, Settings
 from app.utils.column_mapping import find_geography_columns
-from app.utils.common import modify_values_to_be_in_set, read_pandas_dataset
+from app.utils.common import (
+    modify_values_to_be_in_set,
+    read_dataset,
+    read_pandas_dataset,
+)
 
+settings = Settings()
 geograhy_setting = GeographySettings()
 
 
@@ -86,9 +91,26 @@ async def country_expectation_suite(dataset, result_format):
 
 
 async def geography_expectation_suite(dataset, result_format):
+    if isinstance(dataset, str):
+        dataset = await read_dataset(dataset)
+
     expectations = await asyncio.gather(
         country_expectation_suite(dataset, result_format),
         state_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
     return expectations
+
+
+async def geography_expectation_suites(s3_files_key, result_type):
+    expectation = await asyncio.gather(
+        *[
+            geography_expectation_suite(
+                f"http://{settings.S3_ENDPOINT}/{settings.S3_BUCKET}/{s3_file_key}",
+                result_type,
+            )
+            for s3_file_key in s3_files_key
+        ]
+    )
+    expectation = ChainMap(*expectation)
+    return jsonable_encoder(expectation)

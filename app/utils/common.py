@@ -1,3 +1,5 @@
+import re
+
 import great_expectations as ge
 import pandas as pd
 
@@ -8,7 +10,6 @@ geographic_settings = GeographySettings()
 
 async def read_dataset(source: str, **kwargs):
     dataset = ge.read_csv(source, **kwargs)
-
     return dataset
 
 
@@ -104,3 +105,11 @@ async def modify_values_to_match_strftime_format(
                 changed_config["expect_column_values_to_match_strftime_format"]
             )
     return default_config
+
+
+def slugify(text: str):
+    text = text.lower()
+    text = re.sub(r"[^/.a-z0-9_-]", "-", text)
+    text = re.sub(r"-{2,}", "-", text)
+    print(text)
+    return text

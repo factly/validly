@@ -123,12 +123,12 @@ class Meta(BaseModel):
 
 
 class ColumnValuesToBeInSet(BaseModel):
-    success: bool
-    results: List[Result]
-    evaluation_parameters: Dict[str, Any]
-    _statistics: Statistics
-    _meta: Meta
-    _metrics: Dict[str, Any]
+    success: Optional[bool]
+    results: Optional[List[Result]]
+    evaluation_parameters: Optional[Dict[str, Any]]
+    _statistics: Optional[Statistics]
+    _meta: Optional[Meta]
+    _metrics: Optional[Dict[str, Any]]
 
     class Config:
         underscore_attrs_are_private = True

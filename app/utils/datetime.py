@@ -4,13 +4,15 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
-from app.core.config import DateTimeSettings
+from app.core.config import DateTimeSettings, Settings
 from app.utils.column_mapping import find_datetime_columns
 from app.utils.common import (
     modify_values_to_match_regex,
     modify_values_to_match_strftime_format,
+    read_dataset,
 )
 
+settings = Settings()
 datetime_settings = DateTimeSettings()
 
 
@@ -183,6 +185,9 @@ async def date_expectation_suite(dataset, result_format):
 
 
 async def datetime_expectation_suite(dataset, result_format):
+    if isinstance(dataset, str):
+        dataset = await read_dataset(dataset)
+
     expectations = await asyncio.gather(
         calendar_year_expectation_suite(dataset, result_format),
         non_calendar_year_expectation_suite(dataset, result_format),
@@ -191,4 +196,18 @@ async def datetime_expectation_suite(dataset, result_format):
         date_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
-    return expectations
+    return jsonable_encoder(expectations)
+
+
+async def datetime_expectation_suites(s3_files_key, result_type):
+    expectation = await asyncio.gather(
+        *[
+            datetime_expectation_suite(
+                f"http://{settings.S3_ENDPOINT}/{settings.S3_BUCKET}/{s3_file_key}",
+                result_type,
+            )
+            for s3_file_key in s3_files_key
+        ]
+    )
+    expectation = ChainMap(*expectation)
+    return jsonable_encoder(expectation)

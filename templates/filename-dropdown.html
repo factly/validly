@@ -1,0 +1,50 @@
+<div class="container is-grouped">
+    <section class="section">
+        <div class="container">
+            {% for file in expectations %}
+            <div class="card is-fullwidth mb-4">
+                {% set card_header_color = namespace(all_success="has-background-success-light") %} {% for exception in expectations[file] %} {% if not expectations[file][exception]["success"] %} {% set card_header_color.all_success="has-background-danger-light" %} {%
+                endif %} {% endfor %}
+                <header class="card-header {{card_header_color.all_success}}">
+                    {% set filename = file.split('/')[-1].rstrip('.csv') %}
+                    <p class="card-header-title">{{ filename }}</p>
+                    <a class="card-header-icon card-toggle">
+                        <i>Click Here</i>
+                    </a>
+                </header>
+                <div class="card-content is-hidden">
+                    <div class="content">
+                        {% include "validation-content.html" %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let cardToggles = document.getElementsByClassName('card-toggle');
+        for (let i = 0; i < cardToggles.length; i++) {
+            cardToggles[i].addEventListener('click', e => {
+                e.currentTarget.parentElement.parentElement.childNodes[3].classList.toggle('is-hidden');
+            });
+        }
+    });
+
+    function open_expectation(evt, expectation, filenameContent, filenameLink) {
+        var i, tabcontent, tablinks;
+        expectationContent = document.getElementsByClassName(filenameContent);
+        for (i = 0; i < expectationContent.length; i++) {
+            expectationContent[i].style.display = "none";
+            expectationContent[i].className = expectationContent[i].className.replace(" is-hidden", "");
+        }
+        expectationLink = document.getElementsByClassName(filenameLink);
+        for (i = 0; i < expectationLink.length; i++) {
+            expectationLink[i].className = expectationLink[i].className.replace(" active", "");
+        }
+        document.getElementById(expectation).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>

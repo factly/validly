@@ -1,8 +1,17 @@
 import logging
 from typing import Dict, List, Union
 
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile,
+    status,
+)
 from fastapi.logger import logger
+from fastapi.templating import Jinja2Templates
 
 from app.core.config import Settings
 from app.models.date_strftime_pattern import DateStrftimePattern
@@ -18,9 +27,23 @@ from app.utils.minio_transfer import (
 )
 
 logging.basicConfig(level=logging.INFO)
+templates = Jinja2Templates(directory="templates")
 
 dataset_router = router = APIRouter()
 settings = Settings()
+
+
+@router.get(
+    "/expectation/datasets/",
+)
+async def execute_dataset_expectation_get(request: Request):
+    # with open('app/test/response_1648555775750.json') as json_file:
+    #     expectations = json.load(json_file)
+    # return templates.TemplateResponse("dataset-form.html",
+    # context={"request": request, "expectations": expectations})
+    return templates.TemplateResponse(
+        "dataset-form.html", context={"request": request}
+    )
 
 
 @router.post(
@@ -42,8 +65,9 @@ settings = Settings()
     response_model_exclude_unset=True,
     summary="Execute all possible expectation to a dataset",
 )
-async def execute_dataset_expectation(
-    result_type: ExpectationResultType,
+async def execute_dataset_expectation_post(
+    request: Request,
+    result_type: ExpectationResultType = Form(...),
     datasets: List[UploadFile] = File(...),
 ):
     try:
@@ -59,7 +83,11 @@ async def execute_dataset_expectation(
     else:
         s3_files_key = await get_files_inside_folder(s3_folder)
         expectations = await datasets_expectation(s3_files_key, result_type)
-        return expectations
+        return templates.TemplateResponse(
+            "base.html",
+            context={"request": request, "expectations": expectations},
+        )
+        # return expectations
 
     # return {"filename": dataset.filename, "content": dataset.content_type}     pass
 

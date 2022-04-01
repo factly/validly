@@ -102,3 +102,8 @@ async def get_files_inside_folder(folder_name: str):
         raise Exception(f"Could not get files inside folder: {e}")
     else:
         return file_keys
+
+
+# async def save_expectation_to_minio_folder(expectation, s3_folder: str):
+
+#     pass

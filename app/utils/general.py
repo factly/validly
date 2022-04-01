@@ -1,4 +1,5 @@
 import asyncio
+from collections import ChainMap
 
 import great_expectations as ge
 
@@ -12,7 +13,13 @@ async def duplicates_expectation_suite(dataset, result_format):
     expectation = ge_pandas_dataset.expect_compound_columns_to_be_unique(
         column_list=ge_pandas_dataset.columns, result_format=result_format
     )
-    return expectation
+    expectation_dict = expectation.to_json_dict()
+    response = {
+        expectation_dict["expectation_config"][
+            "expectation_type"
+        ]: expectation_dict
+    }
+    return response
 
 
 async def leading_trailing_whitespace_expectation_suite(
@@ -25,7 +32,13 @@ async def leading_trailing_whitespace_expectation_suite(
         column_list=list(ge_pandas_dataset.columns),
         result_format=result_format,
     )
-    return expectation
+    expectation_dict = expectation.to_json_dict()
+    response = {
+        expectation_dict["expectation_config"][
+            "expectation_type"
+        ]: expectation_dict
+    }
+    return response
 
 
 async def multispaces_between_text_expectation_suite(dataset, result_format):
@@ -38,7 +51,13 @@ async def multispaces_between_text_expectation_suite(dataset, result_format):
             result_format=result_format,
         )
     )
-    return expectation
+    expectation_dict = expectation.to_json_dict()
+    response = {
+        expectation_dict["expectation_config"][
+            "expectation_type"
+        ]: expectation_dict
+    }
+    return response
 
 
 async def special_character_expectation_suite(dataset, result_format):
@@ -51,7 +70,13 @@ async def special_character_expectation_suite(dataset, result_format):
             result_format=result_format,
         )
     )
-    return expectation
+    expectation_dict = expectation.to_json_dict()
+    response = {
+        expectation_dict["expectation_config"][
+            "expectation_type"
+        ]: expectation_dict
+    }
+    return response
 
 
 async def bracket_values_expectation_suite(dataset, result_format):
@@ -62,7 +87,13 @@ async def bracket_values_expectation_suite(dataset, result_format):
         column_list=list(ge_pandas_dataset.columns),
         result_format=result_format,
     )
-    return expectation
+    expectation_dict = expectation.to_json_dict()
+    response = {
+        expectation_dict["expectation_config"][
+            "expectation_type"
+        ]: expectation_dict
+    }
+    return response
 
 
 async def general_table_expectation_suite(dataset, result_format):
@@ -73,5 +104,6 @@ async def general_table_expectation_suite(dataset, result_format):
         bracket_values_expectation_suite(dataset, result_format),
         special_character_expectation_suite(dataset, result_format),
     )
-    expectations = [expectation.to_json_dict() for expectation in expectations]
-    return {"table_expectations": expectations}
+    # expectations = [expectation.to_json_dict() for expectation in expectations]
+    expectations = ChainMap(*expectations)
+    return expectations

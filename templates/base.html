@@ -1,15 +1,14 @@
 <html>
-
-<html>
 <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Validly</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 </head>
 
 <body>
-    {% include "navbar.html" %} {% block content %}{% endblock %} {% if expectations %} {% include "filename-dropdown.html" %} {% endif %} {% block docs_content %} {% endblock %}
+    {% include "navbar.html" %} {% include "dataset-form.html" %} {% if expectations %} {% include "filename-dropdown.html" %} {% endif %} {% block docs_content %} {% endblock %}
 </body>
 
 </html>

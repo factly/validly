@@ -1,7 +1,7 @@
 <div class="container">
     <div class="columns">
         <div class="column is-4">
-            <aside class="menu box has-background-light">
+            <aside class="menu box has-background-white-bis">
                 <ul class="menu-list pl-0 ml-0">
                     {% for expectation in expectations[file] %} {% set expectation_name = expectation|replace("_", " ") %} {% set expectation_name_hyphen = expectation|replace("_", "-") %} {% if expectations[file][expectation]["success"] %}
                     <a class="card is-size-6 mb-1 has-background-success-light">
@@ -19,24 +19,26 @@
         </div>
         <div class="column">
             {% for expectation in expectations[file] %} {% set expectation_name = expectation|replace("_", " ") %} {% set expectation_name_hyphen = expectation|replace("_", "-") %} {% if not expectations[file][expectation]["success"] %}
-            <div class="box content {{filename}}-content has-background-light is-hidden" id="{{filename}}-{{expectation_name_hyphen}}">
+            <div class="box content {{filename}}-content has-background-white-bis is-hidden" id="{{filename}}-{{expectation_name_hyphen}}">
                 <h1 class="subtitle is-size-6">{{ expectation }}</h1>
-                <!-- when column manp expectations provided -->
+                <!-- when column map expectations provided -->
                 {% if "results" in expectations[file][expectation].keys() %}
                 <ul>Unwanted Values Count: {{ expectations[file][expectation]["results"][0]["result"]["unexpected_count"] }} </ul>
-                {% set unexpected_unique_values = expectations[file][expectation]["results"][0]["result"]["partial_unexpected_list"]|unique() %}
-                <ul>Unwanted Values :
-                    <br> {% for unexpected_value in unexpected_unique_values %}
-                    <li>{{unexpected_value}}</li>
-                    {% endfor %}
+                {% set unexpected_values = expectations[file][expectation]["results"][0]["result"]["partial_unexpected_list"]| unique() %}
+                <ul>Few Unwanted values present in Column :</br>
+                    <div class="tags are-small">
+                        {% for unexpected_value in unexpected_values %}
+                        <span class="tag has-background-warning is-rounded is-responsive is-bordered has-text-weight-bold">{{unexpected_value}}</span>{% endfor %}
+                    </div>
                 </ul>
                 <!-- when table expectation is provided -->
                 {% else %}
                 <ul>Unwanted Values Count: {{ expectations[file][expectation]["result"]["unexpected_count"] }}</ul>
-                <ul>
-                    Unwanted Values : <br> {% for row in expectations[file][expectation]["result"]["partial_unexpected_list"] %} {% set value_list = row.values() %}
-                    <li>{{value_list|join(", ")}}</li>
-                    {% endfor%}
+                <ul>Few Unwanted present in Row Number : <br>
+                    <div class="tags are-small">
+                        {% for row in expectations[file][expectation]["result"]["partial_unexpected_index_list"] %}
+                        <span class="tag has-background-warning is-rounded is-responsive is-bordered has-text-weight-bold">{{row + 1}}</span> {% endfor %}
+                    </div>
                 </ul>
                 {% endif %}
             </div>

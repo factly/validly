@@ -1,30 +1,32 @@
 version: "3.7"
 
 services:
-  ##########################################################################
-  ######                       TOOL SERVER                           #######
-  ##########################################################################
-  # validly-server:
-  #   ports:
-  #     - 8000:8000
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.dev
-  #   command: >
-  #     /bin/sh -c "
-  #     uvicorn app.main:app --reload --host 0.0.0.0;
-  #     "
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - validly
+  # ##########################################################################
+  # ######                       TOOL SERVER                           #######
+  # ##########################################################################
+  validly-server:
+    depends_on:
+      - minio
+    ports:
+      - 8000:8000
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: >
+      /bin/sh -c "
+      uvicorn app.main:app --reload --host 0.0.0.0;
+      "
+    env_file:
+      - .env
+    networks:
+      - validly
 
 
   ###########################################################################
   #######                        MINIO                                #######
   ###########################################################################
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -39,7 +41,7 @@ services:
     command: server --console-address :9001 /export
 
   createbuckets:
-    image: minio/mc
+    image: minio/mc:latest
     depends_on:
       - minio
     volumes:
@@ -47,13 +49,24 @@ services:
     networks:
       - validly
     entrypoint: >
-      /bin/sh -c "  
-      minio:9000 -- echo 'Minio is up. Creating the bucket!!';
+      /bin/sh -c "
+      apk add --no-cache bash;
+      wait-for-it.sh minio:9000 -- echo 'Minio is up. Creating the bucket!!';
       /usr/bin/mc config host add myminio http://minio:9000 minio password;
       /usr/bin/mc mb myminio/validly;
       /usr/bin/mc policy set download myminio/validly;
       exit 0;
       "
+
+  # ###########################################################################
+  # #######             UPLOAD SERVICES                                 #######
+  # ###########################################################################
+  # companion:
+  #   image: transloadit/companion
+  #   ports:
+  #     - "3020:3020"
+  #   env_file:
+  #     - ./companion/.env
 
 networks:
   validly:

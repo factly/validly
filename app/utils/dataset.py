@@ -58,3 +58,17 @@ async def datasets_expectation(s3_files_key, result_type):
     )
     expectations = ChainMap(*expectations)
     return jsonable_encoder(expectations)
+
+
+async def datasets_expectation_from_url(urls, result_type):
+    expectations = await asyncio.gather(
+        *[
+            dataset_expectation(
+                url,
+                result_type,
+            )
+            for url in urls
+        ]
+    )
+    expectations = ChainMap(*expectations)
+    return jsonable_encoder(expectations)

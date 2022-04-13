@@ -1,27 +1,26 @@
-<div class="container is-grouped">
-    <section class="section">
-        <div class="container">
-            {% for file in expectations %}
-            <div class="card is-fullwidth mb-4">
-                {% set card_header_color = namespace(all_success="has-background-success-light") %} {% for exception in expectations[file] %} {% if not expectations[file][exception]["success"] %} {% set card_header_color.all_success="has-background-danger-light" %} {%
-                endif %} {% endfor %}
-                <header class="card-header {{card_header_color.all_success}}">
-                    {% set filename = file.split('/')[-1].rstrip('.csv') %}
-                    <p class="card-header-title">{{ filename }}</p>
-                    <a class="card-header-icon card-toggle">
-                        <i>Click Here</i>
-                    </a>
-                </header>
-                <div class="card-content is-hidden">
-                    <div class="content">
-                        {% include "validation-content.html" %}
-                    </div>
+<section class="section">
+    <div class="container">
+        {% for file in expectations %}
+        <div class="card is-fullwidth mb-4">
+            {% set card_header_color = namespace(all_success="has-background-success-light") %} {% for exception in expectations[file] %} {% if not expectations[file][exception]["success"] %} {% set card_header_color.all_success="has-background-danger-light" %} {%
+            endif %} {% endfor %}
+            <header class="card-header {{card_header_color.all_success}}">
+                {% set filename = file.split('/')[-1].rstrip('.csv') %}
+                <p class="card-header-title">{{ filename }}</p>
+                <a class="card-header-icon card-toggle">
+                    <i>Click Here</i>
+                </a>
+            </header>
+            <div class="card-content is-hidden has-background-white-ter">
+                <div class="content">
+                    {% include "validation-content.html" %}
                 </div>
             </div>
-            {% endfor %}
         </div>
-    </section>
-</div>
+        {% endfor %}
+    </div>
+</section>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

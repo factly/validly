@@ -46,7 +46,17 @@ async def state_expectation_suite(dataset, result_format):
         ge_pandas_dataset = ge.from_pandas(
             dataset, expectation_suite=expectation_suite
         )
-        results[each_column] = ge_pandas_dataset.validate()
+        validation = ge_pandas_dataset.validate()
+        validation_ui_name = (
+            validation["results"][0]["expectation_config"]["meta"][
+                "expectation_name"
+            ]
+            + " - "
+            + validation["results"][0]["expectation_config"]["_kwargs"][
+                "column"
+            ]
+        )
+        results[validation_ui_name] = validation
 
     return jsonable_encoder(results)
 
@@ -85,7 +95,17 @@ async def country_expectation_suite(dataset, result_format):
         ge_pandas_dataset = ge.from_pandas(
             dataset, expectation_suite=expectation_suite
         )
-        results[each_column] = ge_pandas_dataset.validate()
+        validation = ge_pandas_dataset.validate()
+        validation_ui_name = (
+            validation["results"][0]["expectation_config"]["meta"][
+                "expectation_name"
+            ]
+            + " - "
+            + validation["results"][0]["expectation_config"]["_kwargs"][
+                "column"
+            ]
+        )
+        results[validation_ui_name] = validation
 
     return jsonable_encoder(results)
 

@@ -6,6 +6,7 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Query,
     Request,
     UploadFile,
     status,
@@ -15,12 +16,15 @@ from fastapi.templating import Jinja2Templates
 
 from app.core.config import Settings
 from app.models.date_strftime_pattern import DateStrftimePattern
-from app.models.enums import ExpectationResultType
+from app.models.enums import ExpectationResultFormat, ExpectationResultType
 from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
 from app.models.general import GeneralTableExpectation
 from app.models.regex_list_pattern import RegexMatchList
 from app.models.regex_pattern import RegexPatternExpectation
-from app.utils.dataset import datasets_expectation
+from app.utils.dataset import (
+    datasets_expectation,
+    datasets_expectation_from_url,
+)
 from app.utils.minio_transfer import (
     get_files_inside_folder,
     upload_local_file_to_bucket,
@@ -36,13 +40,9 @@ settings = Settings()
 @router.get(
     "/expectation/datasets/",
 )
-async def execute_dataset_expectation_get(request: Request):
-    # with open('app/test/response_1648555775750.json') as json_file:
-    #     expectations = json.load(json_file)
-    # return templates.TemplateResponse("dataset-form.html",
-    # context={"request": request, "expectations": expectations})
+async def execute_dataset_expectation(request: Request):
     return templates.TemplateResponse(
-        "dataset-form.html", context={"request": request}
+        "base.html", context={"request": request}
     )
 
 
@@ -67,8 +67,17 @@ async def execute_dataset_expectation_get(request: Request):
 )
 async def execute_dataset_expectation_post(
     request: Request,
-    result_type: ExpectationResultType = Form(...),
-    datasets: List[UploadFile] = File(...),
+    format: ExpectationResultFormat = Query(
+        default=ExpectationResultFormat.JSON,
+        description="Provide Expectation output in desired format",
+    ),
+    result_type: ExpectationResultType = Form(
+        ExpectationResultType.SUMMARY,
+        description="Level of Deatils for a Expectation result",
+    ),
+    datasets: List[UploadFile] = File(
+        ..., description="Dataset file to be evaluated"
+    ),
 ):
     try:
         logger.info(f"dataset: {datasets}")
@@ -78,51 +87,91 @@ async def execute_dataset_expectation_post(
         logger.exception(f"error: {e}")
         HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Could not upload file to minio",
+            detail="Could not upload file to temporary minio bucket",
         )
     else:
         s3_files_key = await get_files_inside_folder(s3_folder)
         expectations = await datasets_expectation(s3_files_key, result_type)
-        return templates.TemplateResponse(
-            "base.html",
-            context={"request": request, "expectations": expectations},
+        if format is ExpectationResultFormat.JSON:
+            return expectations
+        else:
+            return templates.TemplateResponse(
+                "base.html",
+                context={"request": request, "expectations": expectations},
+            )
+
+
+@router.post(
+    "/expectation/datasets/urls/",
+)
+async def execute_dataset_expectation_post_from_url(
+    request: Request,
+    urls: List[str],
+    format: ExpectationResultFormat = Query(
+        default=ExpectationResultFormat.JSON,
+        description="Provide Expectation output in desired format",
+    ),
+    result_type: ExpectationResultType = Query(ExpectationResultType.SUMMARY),
+):
+    try:
+        expectations = await datasets_expectation_from_url(urls, result_type)
+    except Exception as e:
+        logger.exception(f"error: {e}")
+        HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not run Expectation",
         )
-        # return expectations
+    else:
+        if format is ExpectationResultFormat.JSON:
+            return expectations
+        else:
+            return templates.TemplateResponse(
+                "base.html",
+                context={"request": request, "expectations": expectations},
+            )
 
-    # return {"filename": dataset.filename, "content": dataset.content_type}     pass
 
+@router.post(
+    "/expectation/datasets/uppy/",
+)
+async def execute_dataset_expectation_post_from_uppy(
+    request: Request,
+    format: ExpectationResultFormat = Query(
+        default=ExpectationResultFormat.JSON,
+        description="Provide Expectation output in desired format",
+    ),
+):
+    # File should be passed by uppy in request form
+    form = await request.form()
+    file = form["file"]
 
-# @router.get(
-#     "/expectation/datasets",
-#     response_model=Dict[
-#         str,
-#         Dict[
-#             Any,
-#             Union[
-#                 List[GeneralTableExpectation],
-#                 RegexPatternExpectation,
-#                 RegexMatchList,
-#                 ColumnValuesToBeInSet,
-#                 DateStrftimePattern,
-#             ],
-#         ],
-#     ],
-#     response_model_exclude_none=True,
-#     response_model_exclude_unset=True,
-#     summary="Expectation for all datasets in a folder",
-# )
-# async def execute_datasets_expectation(
-#     result_type: ExpectationResultType,
-#     dataset_folder: str = settings.EXAMPLE_FOLDER,
-# ):
-#     try:
-#         expectations = await datasets_expectation(dataset_folder, result_type)
-#     except PathError as pe:
-#         raise HTTPException(
-#             status_code=status.HTTP_406_NOT_ACCEPTABLE,
-#             detail=jsonable_encoder(
-#                 {"error": str(pe), "dataset_folder": f"{dataset_folder}"}
-#             ),
-#         )
-#     else:
-#         return expectations
+    # If file is not present in request form, then quit the operation
+    if not file:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No file found in Request",
+        )
+
+    try:
+        # upload dataset to minio
+        s3_folder = await upload_local_file_to_bucket(file)
+    except Exception as e:
+        logger.exception(f"Error on saving file temporary to Minio: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error on saving file temporary to Minio: {e}",
+        )
+    else:
+        # Get all files inside the folder in Minio Bucket
+        s3_files_key = await get_files_inside_folder(s3_folder)
+
+        # TODO : Later on, use ENUM to get the result type
+        expectations = await datasets_expectation(s3_files_key, "SUMMARY")
+
+        if format is ExpectationResultFormat.JSON:
+            return expectations
+        else:
+            return templates.TemplateResponse(
+                "base.html",
+                context={"request": request, "expectations": expectations},
+            )

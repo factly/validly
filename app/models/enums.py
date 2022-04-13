@@ -6,3 +6,8 @@ class ExpectationResultType(str, enum.Enum):
     BASIC = "BASIC"
     SUMMARY = "SUMMARY"
     COMPLETE = "COMPLETE"
+
+
+class ExpectationResultFormat(str, enum.Enum):
+    JSON = "json"
+    HTML = "html"

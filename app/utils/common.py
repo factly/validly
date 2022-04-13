@@ -1,16 +1,24 @@
+import logging
 import re
 
 import great_expectations as ge
 import pandas as pd
+from fastapi.logger import logger
 
 from app.core.config import APP_DIR, GeographySettings
 
+logging.basicConfig(level=logging.INFO)
 geographic_settings = GeographySettings()
 
 
 async def read_dataset(source: str, **kwargs):
-    dataset = ge.read_csv(source, **kwargs)
-    return dataset
+    try:
+        dataset = ge.read_csv(source, **kwargs)
+    except Exception as e:
+        logger.info(f"Error reading Dataset fron : {source}: {e}")
+    else:
+        logger.info(f"Dataset read from : {source}")
+        return dataset
 
 
 async def read_pandas_dataset(source: str, **kwargs):

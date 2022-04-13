@@ -1,6 +1,5 @@
-{% extends "base.html" %} {% block content %}
 <div class="container is-grouped mt-4">
-    <form action="/expectation/datasets/" method="POST" enctype="multipart/form-data">
+    <form action="http://localhost:8000/expectation/datasets/?format=html" method="POST" enctype="multipart/form-data">
         <div class="field is-grouped">
             <div class="control">
                 <div id="file-js" class="file has-name">
@@ -38,6 +37,70 @@
         </div>
     </form>
 </div>
+
+<script src="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.js"></script>
+<script>
+    var uppy = new Uppy.Core({
+            restrictions: {
+                "allowedFileTypes": [".csv"]
+            },
+        })
+        .use(Uppy.Dashboard, {
+            inline: true,
+            target: '#drag-drop-area'
+        })
+        .use(Uppy.XHRUpload, {
+            endpoint: 'http://localhost:8000/expectation/datasets/from-uppy/',
+            bundle: false,
+        })
+        // var uppy = new Uppy.Core({
+        //         restrictions: {
+        //             "allowedFileTypes": [".csv"]
+        //         },
+        //         onBeforeFileAdded: () => {
+        //             Promise.resolve()
+        //         },
+        //         onBeforeUpload: files => {
+        //             const uuidFolder = crypto.randomUUID()
+        //             for (var prop in files) {
+        //                 files[prop].name = uuidFolder + "/" + files[prop].name
+        //                 files[prop].meta.name = uuidFolder + "/" + files[prop].meta.name
+        //             }
+        //             this.files = files
+        //             Promise.resolve()
+        //         },
+        //     })
+        //     .use(Uppy.Dashboard, {
+        //         inline: true,
+        //         target: '#drag-drop-area'
+        //     })
+        //     // .use(Uppy.AwsS3, {
+        //     //     companionUrl: 'http://127.0.0.1:3020/'
+        //     // })
+        //     // .use(Uppy.GoogleDrive, {
+        //     //     companionUrl: 'http://127.0.0.1:3020/'
+        //     // })
+        //     .use(Uppy.XHRUpload, {
+        //         endpoint: 'http://localhost:8000/expectation/datasets/from-uppy/',
+        //     })
+
+    uppy.on('complete', (result) => {
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
+
+        const url_list = result.successful.map(res => res.uploadURL).join()
+        const data = {
+            "result_type": "SUMMARY",
+            urls: url_list
+        }
+        console.log(url_list)
+        console.log(data)
+
+        fetch("http://localhost:8000/expectation/datasets/from-url/", {
+            method: "POST",
+            body: JSON.stringify(data),
+        })
+    })
+</script>
 <script>
     const fileInput = document.querySelector('#file-js input[type=file]');
     fileInput.onchange = () => {
@@ -47,4 +110,3 @@
         }
     }
 </script>
-{% endblock %}

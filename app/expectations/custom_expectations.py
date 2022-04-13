@@ -17,6 +17,9 @@ class GenericCustomExpectations(PandasDataset):
         self,
         column_list,
         pattern=custom_expectation_settings.TRAIL_OR_LEAD_WHITESPACE_PATTERN,
+        meta={
+            "expectation_name": "No leading or traling whitespaces",
+        },
     ):
         return column_list.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True
@@ -27,6 +30,9 @@ class GenericCustomExpectations(PandasDataset):
         self,
         column_list,
         pattern=custom_expectation_settings.MULTIPLE_BLANKSPACE_PATTERN,
+        meta={
+            "expectation_name": "No multiple whitespaces",
+        },
     ):
         return column_list.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True
@@ -37,6 +43,9 @@ class GenericCustomExpectations(PandasDataset):
         self,
         column_list,
         pattern=custom_expectation_settings.SPECIAL_CHARACTER_PATTERN,
+        meta={
+            "expectation_name": "No special characters in Table values",
+        },
     ):
         return column_list.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True
@@ -44,7 +53,12 @@ class GenericCustomExpectations(PandasDataset):
 
     @MetaPandasDataset.multicolumn_map_expectation
     def expect_column_values_to_not_have_brackets(
-        self, column, pattern=custom_expectation_settings.BRACKET_PATTERN
+        self,
+        column,
+        pattern=custom_expectation_settings.BRACKET_PATTERN,
+        meta={
+            "expectation_name": "No unnecessary brackets in Categories",
+        },
     ):
         return column.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True

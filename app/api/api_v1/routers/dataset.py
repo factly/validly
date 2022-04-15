@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, List, Union
+from pprint import pprint
+from typing import List
 
 from fastapi import (
     APIRouter,
@@ -15,12 +16,14 @@ from fastapi.logger import logger
 from fastapi.templating import Jinja2Templates
 
 from app.core.config import Settings
-from app.models.date_strftime_pattern import DateStrftimePattern
+
+# from app.models.date_strftime_pattern import DateStrftimePattern
 from app.models.enums import ExpectationResultFormat, ExpectationResultType
-from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
-from app.models.general import GeneralTableExpectation
-from app.models.regex_list_pattern import RegexMatchList
-from app.models.regex_pattern import RegexPatternExpectation
+
+# from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
+# from app.models.general import GeneralTableExpectation
+# from app.models.regex_list_pattern import RegexMatchList
+# from app.models.regex_pattern import RegexPatternExpectation
 from app.utils.dataset import (
     datasets_expectation,
     datasets_expectation_from_url,
@@ -48,21 +51,21 @@ async def execute_dataset_expectation(request: Request):
 
 @router.post(
     "/expectation/datasets/",
-    response_model=Dict[
-        str,
-        Dict[
-            str,
-            Union[
-                List[GeneralTableExpectation],
-                RegexPatternExpectation,
-                RegexMatchList,
-                ColumnValuesToBeInSet,
-                DateStrftimePattern,
-            ],
-        ],
-    ],
-    response_model_exclude_none=True,
-    response_model_exclude_unset=True,
+    # response_model=Dict[
+    #     str,
+    #     Dict[
+    #         str,
+    #         Union[
+    #             List[GeneralTableExpectation],
+    #             RegexPatternExpectation,
+    #             RegexMatchList,
+    #             ColumnValuesToBeInSet,
+    #             DateStrftimePattern,
+    #         ],
+    #     ],
+    # ],
+    # response_model_exclude_none=True,
+    # response_model_exclude_unset=True,
     summary="Execute all possible expectation to a dataset",
 )
 async def execute_dataset_expectation_post(
@@ -93,6 +96,7 @@ async def execute_dataset_expectation_post(
         s3_files_key = await get_files_inside_folder(s3_folder)
         expectations = await datasets_expectation(s3_files_key, result_type)
         if format is ExpectationResultFormat.JSON:
+            pprint(expectations)
             return expectations
         else:
             return templates.TemplateResponse(

@@ -9,6 +9,12 @@ python = "^3.8"
 fastapi = "^0.71.0"
 great-expectations = "^0.14.0"
 uvicorn = "^0.16.0"
+python-dotenv = "^0.19.2"
+asyncio = "^3.4.3"
+minio = "^7.1.5"
+python-multipart = "^0.0.5"
+Jinja2 = "^3.0.3"
+Werkzeug = "^2.1.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"

@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block docs_content %} {% for expectation_type in ["expect-column-values-to-not-have-special-character","state"] %}
+<div class="container mt-4">
+    <div class="card is-fullwidth mb-4">
+        <header class="card-header has-background-info-light">
+            <p class="card-header-title">{{expectation_type}}</p>
+            <a class="card-header-icon card-toggle">
+                <span class="icon has-text-info is-large">
+                          <i class="fas fa-info-circle fas fa-2x"></i>
+                        </span>
+                <!-- <span>{{ expectation_type }}</span> -->
+            </a>
+        </header>
+        <div class="card-content is-hidden has-background-white-bis">
+            <div class="content">
+                {% include "docs/%s.html"|format(expectation_type) %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</body>
+
+</html>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js'>
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let cardToggles = document.getElementsByClassName('card-toggle');
+        for (let i = 0; i < cardToggles.length; i++) {
+            cardToggles[i].addEventListener('click', e => {
+                e.currentTarget.parentElement.parentElement.childNodes[3].classList.toggle('is-hidden');
+            });
+        }
+    });
+</script>
+{% endblock %}

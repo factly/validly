@@ -5,19 +5,15 @@ services:
   # ######                       TOOL SERVER                           #######
   # ##########################################################################
   validly-server:
+    image : mitra/validly-server
     depends_on:
       - minio
     ports:
       - 8000:8000
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
     command: >
       /bin/sh -c "
       uvicorn app.main:app --reload --host 0.0.0.0;
       "
-    volumes:
-      - .:/app
     env_file:
       - .env
     networks:

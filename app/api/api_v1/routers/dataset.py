@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 from typing import List
 
 from fastapi import (
@@ -96,7 +95,6 @@ async def execute_dataset_expectation_post(
         s3_files_key = await get_files_inside_folder(s3_folder)
         expectations = await datasets_expectation(s3_files_key, result_type)
         if format is ExpectationResultFormat.JSON:
-            pprint(expectations)
             return expectations
         else:
             return templates.TemplateResponse(

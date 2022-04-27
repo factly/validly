@@ -119,5 +119,4 @@ def slugify(text: str):
     text = text.lower()
     text = re.sub(r"[^/.a-z0-9_-]", "-", text)
     text = re.sub(r"-{2,}", "-", text)
-    print(text)
     return text

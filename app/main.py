@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -15,6 +16,14 @@ from app.core.config import Settings
 settings = Settings()
 
 app = FastAPI(title=settings.PROJECT_NAME, docs_url=settings.DOCS_URL)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_methods=settings.CORS_METHODS,
+    allow_credentials=settings.CORS_ALLWED_CREDENTIALS,
+    allow_headers=["*"],
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")

@@ -30,6 +30,18 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
 /projects/rbi/data/processed/1_timeseries/5_handbook-of-statistics-on\
 -the-indian-economy/hbs-mb-scb-select-aggregates-weekly/output.csv"""
 
+    # CORS PARAMS
+    CORS_ORIGINS: list = [
+        "http://127.0.0.1:8000",
+        "http://127.0.0.1:8005",
+        "http://127.0.0.1:4455",
+        "http://localhost:8000",
+        "http://localhost:8005",
+        "http://localhost:4455/",
+    ]
+    CORS_METHODS: list = ["GET", "POST"]
+    CORS_ALLWED_CREDENTIALS: bool = True
+
     # S3 (MINIO) PARAMS
     S3_ENDPOINT: str = "localhost:9000"
     S3_BUCKET: str = "validly"

@@ -1,6 +1,6 @@
 [flake8]
 ; ignore = E266, E501, W503, E203, C901
-exclude = .eggs,*.egg-info,.git,.hg,.tox, __pycache__,.vscode,.venv,__init__.py,.mypy_cache,.pytest_cache
+exclude = .eggs,*.egg-info,.git,.hg,.tox, __pycache__,.vscode,.venv,__init__.py,.mypy_cache,.pytest_cache,app/core/config.py
 max-line-length = 110
 max-complexity = 18
 ; select = C,E,F,W,B,B950

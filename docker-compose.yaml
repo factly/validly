@@ -60,15 +60,5 @@ services:
       exit 0;
       "
 
-  # ###########################################################################
-  # #######             UPLOAD SERVICES                                 #######
-  # ###########################################################################
-  # companion:
-  #   image: transloadit/companion
-  #   ports:
-  #     - "3020:3020"
-  #   env_file:
-  #     - ./companion/.env
-
 networks:
   validly:

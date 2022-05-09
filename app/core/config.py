@@ -49,6 +49,8 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     S3_SECRET: str = "password"
     S3_SECURE: bool = False
 
+    DATA_CLEANING_GUIDE_LINK: str = "https://wp.me/ad1WQ9-dvg"
+
     class Config:
         env_file = ".env"
 
@@ -79,6 +81,8 @@ class DateTimeSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Calender Year Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectaion_error_message": "Calendar Year should be represented as YYYY",
                 },
             }
         ],
@@ -96,6 +100,8 @@ class DateTimeSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Non Calender Year Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectaion_error_message": "Non-Calendar Year such as a financial year or an academic year should be represented as YYYY-YY",
                 },
             }
         ],
@@ -113,6 +119,8 @@ class DateTimeSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Quarter Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectaion_error_message": "Quarter should be represented as Q1,Q2,Q3,Q4",
                 },
             }
         ],
@@ -130,6 +138,8 @@ class DateTimeSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Month Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectaion_error_message": "Month should be complete name with Title case such as January",
                 },
             }
         ],
@@ -147,6 +157,8 @@ class DateTimeSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Date Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Date should be represented as DD-MM-YYYY",
                 },
             }
         ],
@@ -170,6 +182,8 @@ class GeographySettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Country Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Country Name should be from the Data Dictionary",
                 },
             }
         ],
@@ -187,6 +201,8 @@ class GeographySettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "State Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "State Name should be from the Data Dictionary",
                 },
             }
         ],
@@ -210,6 +226,8 @@ class UnitSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Unit Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Unit should be in proper format as 'column_name in unit'",
                 },
             }
         ],
@@ -233,6 +251,8 @@ class NoteSettings(BaseSettings):
                 },
                 "meta": {
                     "expectation_name": "Unit Format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Note should be in proper format as 'column_name:note'",
                 },
             }
         ],
@@ -245,3 +265,27 @@ class CustomExpectationsSettings(BaseSettings):
     MULTIPLE_BLANKSPACE_PATTERN = re.compile(r".+?[\w]+.+?(\s{2,}).+[\w]+.+")
     SPECIAL_CHARACTER_PATTERN = re.compile(r".*?[^\)\w\s\.]$")
     BRACKET_PATTERN = re.compile(r".*([\[\(].+?[\)\]]).*")
+
+    LEADING_TRAILING_WHITE_SPACE_EXPECTATION_NAME: str = (
+        "No leading or traling whitespaces"
+    )
+    MULTIPLE_SPACE_EXPECTATION_NAME: str = "No multiple whitespaces"
+    SPECIAL_CHARACTER_EXPECTATION_NAME: str = (
+        "No special characters in Columns"
+    )
+    BRACKETS_EXPECTATION_NAME: str = "No unnecessary brackets in Categories"
+    DUPLICATE_ROWS_EXPECTATION_NAME: str = "No Duplicate Rows"
+
+    LEADING_TRAILING_WHITESPACE_EXPECTATION_ERR_MSG: str = (
+        "There should be no leading and trailing white spaces"
+    )
+    MULTIPLE_SPACE_EXPECTATION_ERR_MSG: str = (
+        "There should be no multiple whitespaces"
+    )
+    SPECIAL_CHARACTER_EXPECTATION_ERR_MSG: str = "There should be no special character in the category name and measured value, like Telangana** , and any additional information  should be captured in notes instead of using a special character"
+    BRACKETS_EXPECTATION_ERR_MSG: str = (
+        "Categories should not have unnecessary brackets"
+    )
+    DUPLICATE_ROWS_EXPECTATION_ERR_MSG: str = (
+        "There should be no duplicate rows in the dataset"
+    )

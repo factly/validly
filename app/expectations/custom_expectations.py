@@ -46,6 +46,7 @@ class GenericCustomExpectations(PandasDataset):
         meta={
             "expectation_name": "No special characters in Table values",
         },
+        include_meta=True,
     ):
         return column_list.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True

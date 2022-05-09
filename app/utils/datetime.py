@@ -47,7 +47,6 @@ async def calendar_year_expectation_suite(dataset, result_format):
             dataset, expectation_suite=expectation_suite
         )
         validation = ge_pandas_dataset.validate()
-        validation = ge_pandas_dataset.validate()
         validation_ui_name = (
             validation["results"][0]["expectation_config"]["meta"][
                 "expectation_name"

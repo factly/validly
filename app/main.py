@@ -10,6 +10,7 @@ from app.api.api_v1.routers.documentation import documentation_router
 from app.api.api_v1.routers.general import general_router
 from app.api.api_v1.routers.geography import geographic_router
 from app.api.api_v1.routers.note import note_router
+from app.api.api_v1.routers.s3_checks import s3_router
 from app.api.api_v1.routers.unit import unit_router
 from app.core.config import Settings
 
@@ -57,4 +58,5 @@ app.include_router(general_router, prefix="/table", tags=["Table"])
 
 app.include_router(documentation_router, prefix="", tags=["Documentation"])
 
+app.include_router(s3_router, prefix="/s3", tags=["S3 Checks"])
 # app.include_router(column_router, prefix="/column", tags=["Column"])

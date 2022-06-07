@@ -13,14 +13,14 @@ python-dotenv = "^0.19.2"
 asyncio = "^3.4.3"
 minio = "^7.1.5"
 python-multipart = "^0.0.5"
-Jinja2 = "^3.0.3"
+Jinja2 = "3.0.3"
 Werkzeug = "^2.1.1"
 boto3 = "^1.23.7"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
 isort = "^5.9.3"
-black = "^21.9b0"
+black = "^22.3.0"
 
 [tool.black]
 line-length = 79

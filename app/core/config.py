@@ -33,7 +33,7 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     # CORS PARAMS
     CORS_ORIGINS: list = ["*"]
     CORS_METHODS: list = ["*"]
-    CORS_ALLWED_CREDENTIALS: bool = True
+    CORS_HEADERS: list = ["*"]
 
     # S3 (MINIO) PARAMS
     S3_ENDPOINT: str = "localhost:9000"

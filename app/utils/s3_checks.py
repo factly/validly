@@ -1,5 +1,4 @@
 import boto3
-from fastapi import Form
 
 from app.core.config import Settings
 
@@ -7,10 +6,7 @@ settings = Settings()
 
 
 def get_s3_resource(
-    s3_access_key: str = Form(...),
-    s3_secret_key: str = Form(...),
-    s3_endpoint_url: str = Form(...),
-    resource: str = Form("s3"),
+    s3_access_key: str, s3_secret_key: str, s3_endpoint_url: str, resource: str
 ):
     try:
         session = boto3.Session(

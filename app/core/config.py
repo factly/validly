@@ -44,6 +44,12 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
 
     DATA_CLEANING_GUIDE_LINK: str = "https://wp.me/ad1WQ9-dvg"
 
+    # Source Dataset Storage Params
+    S3_SOURCE_ACCESS_KEY: str = ...
+    S3_SOURCE_SECRET_KEY: str = ...
+    S3_SOURCE_ENDPOINT_URL: str = ...
+    S3_SOURCE_RESOURCE: str = "s3"
+
     class Config:
         env_file = ".env"
 

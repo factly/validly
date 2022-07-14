@@ -8,6 +8,10 @@ class s3FileCheck(BaseModel):
     is_exists: bool
 
 
+class ObjectDetail(BaseModel):
+    key: str
+    size: int
+
 class s3FileCheckResponse(BaseModel):
-    exists: List[str]
+    exists: List[ObjectDetail]
     non_exists: List[str]

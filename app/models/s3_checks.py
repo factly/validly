@@ -12,6 +12,7 @@ class ObjectDetail(BaseModel):
     key: str
     size: int
 
+
 class s3FileCheckResponse(BaseModel):
     exists: List[ObjectDetail]
     non_exists: List[str]

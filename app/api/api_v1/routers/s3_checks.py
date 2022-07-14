@@ -145,15 +145,17 @@ async def check_if_files_exist_in_bucket(
 
             # objs = {obj.key for obj in bucket.objects.all()}
             all_s3_objects = [
-                {"key":obj.key, "size": obj.size}
+                {"key": obj.key, "size": obj.size}
                 for obj in bucket.objects.all()
             ]
-            
+
             existing_keys = file_keys_set.intersection(
                 [obj["key"] for obj in all_s3_objects]
             )
             non_existing_keys = set(file_keys).difference(existing_keys)
-            existing_file_details = [obj for obj in all_s3_objects if obj["key"] in existing_keys]
+            existing_file_details = [
+                obj for obj in all_s3_objects if obj["key"] in existing_keys
+            ]
 
             return {
                 "exists": existing_file_details,

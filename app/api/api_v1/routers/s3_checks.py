@@ -136,19 +136,30 @@ async def check_if_files_exist_in_bucket(
         # TODO : Check how Form is combining all the strings inside list
         if len(file_keys) == 1:
             file_keys = [key for key in file_keys[0].split(",")]
+        file_keys_set = set(file_keys)
 
         bucket = s3_resource.Bucket(bucket)
 
         if bucket in s3_resource.buckets.all():
             logger.debug("Bucket exists: {}".format(bucket))
 
-            objs = {obj.key for obj in bucket.objects.all()}
-            existing_files = objs.intersection(file_keys)
-            non_existing_files = set(file_keys) - existing_files
+            # objs = {obj.key for obj in bucket.objects.all()}
+            all_s3_objects = [
+                {"key": obj.key, "size": obj.size}
+                for obj in bucket.objects.all()
+            ]
+
+            existing_keys = file_keys_set.intersection(
+                [obj["key"] for obj in all_s3_objects]
+            )
+            non_existing_keys = set(file_keys).difference(existing_keys)
+            existing_file_details = [
+                obj for obj in all_s3_objects if obj["key"] in existing_keys
+            ]
 
             return {
-                "exists": list(existing_files),
-                "non_exists": list(non_existing_files),
+                "exists": existing_file_details,
+                "non_exists": list(non_existing_keys),
             }
 
         else:

@@ -1,5 +1,7 @@
 import logging
 import re
+from io import BytesIO
+from typing import Union
 
 import great_expectations as ge
 import pandas as pd
@@ -11,14 +13,30 @@ logging.basicConfig(level=logging.INFO)
 geographic_settings = GeographySettings()
 
 
-async def read_dataset(source: str, **kwargs):
-    try:
-        dataset = ge.read_csv(source, **kwargs)
-    except Exception as e:
-        logger.info(f"Error reading Dataset fron : {source}: {e}")
+async def read_dataset(
+    source: str, s3_client=None, bucket_name: Union[str, None] = None, **kwargs
+) -> ge.dataset.pandas_dataset.PandasDataset:
+    if s3_client:
+        # dataset should be downloaded from s3 storage
+        try:
+            response = s3_client.get_object(bucket_name, source)
+            dataset = ge.read_csv(BytesIO(response.data))
+            logger.info(f"Dataset read from : {source}")
+        except Exception as e:
+            logger.info(f"Error reading Dataset from : {source}: {e}")
+        finally:
+            response.close()
+            response.release_conn()
+
     else:
-        logger.info(f"Dataset read from : {source}")
-        return dataset
+        try:
+            dataset = ge.read_csv(source, **kwargs)
+        except Exception as e:
+            logger.info(f"Error reading Dataset from : {source}: {e}")
+        else:
+            logger.info(f"Dataset read from : {source}")
+
+    return dataset
 
 
 async def read_pandas_dataset(source: str, **kwargs):
@@ -27,7 +45,7 @@ async def read_pandas_dataset(source: str, **kwargs):
 
 
 async def load_values_to_be_in_set(domain: str):
-    # this function is used to load csv files, consiting values
+    # this function is used to load csv files, consisting values
     # for states or country that are required to be in specific set
     set_values_file = APP_DIR / "core" / f"{domain}.csv"
     set_values = pd.read_csv(set_values_file)[f"{domain}"].unique()

@@ -3,6 +3,7 @@ import logging
 from collections import ChainMap
 
 from fastapi.encoders import jsonable_encoder
+from minio import Minio
 
 from app.core.config import Settings
 from app.utils.common import read_dataset
@@ -17,8 +18,10 @@ settings = Settings()
 logging.basicConfig(level=logging.INFO)
 
 
-async def dataset_expectation(dataset_path, result_type):
-    dataset = await read_dataset(dataset_path)
+async def dataset_expectation(
+    dataset_path, result_type, s3_client, bucket_name
+):
+    dataset = await read_dataset(dataset_path, s3_client, bucket_name)
     expectation = await asyncio.gather(
         datetime_expectation_suite(dataset, result_type),
         geography_expectation_suite(dataset, result_type),
@@ -47,11 +50,17 @@ async def dataset_expectation(dataset_path, result_type):
 
 
 async def datasets_expectation(s3_files_key, result_type):
+    client = Minio(
+        endpoint=settings.S3_ENDPOINT,
+        access_key=settings.S3_KEY,
+        secret_key=settings.S3_SECRET,
+        secure=settings.S3_SECURE,
+        region=settings.S3_REGION,
+    )
     expectations = await asyncio.gather(
         *[
             dataset_expectation(
-                f"http://{settings.S3_ENDPOINT}/{settings.S3_BUCKET}/{s3_file_key}",
-                result_type,
+                s3_file_key, result_type, client, settings.S3_BUCKET
             )
             for s3_file_key in s3_files_key
         ]
@@ -64,8 +73,7 @@ async def datasets_expectation_from_url(urls, result_type):
     expectations = await asyncio.gather(
         *[
             dataset_expectation(
-                url,
-                result_type,
+                url, result_type, s3_client=None, bucket_name=None
             )
             for url in urls
         ]

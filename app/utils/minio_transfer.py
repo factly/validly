@@ -48,6 +48,7 @@ async def upload_local_file_to_bucket(upload_file_objects):
             access_key=settings.S3_KEY,
             secret_key=settings.S3_SECRET,
             secure=settings.S3_SECURE,
+            region=settings.S3_REGION,
         )
         logger.info(
             f"Bucket Exists : {client.bucket_exists(settings.S3_BUCKET)}"
@@ -84,6 +85,7 @@ async def get_files_inside_folder(folder_name: str):
             access_key=settings.S3_KEY,
             secret_key=settings.S3_SECRET,
             secure=settings.S3_SECURE,
+            region=settings.S3_REGION,
         )
     except Exception as e:
         logger.exception(f"Could not create Minio Client : {e}")
@@ -96,7 +98,6 @@ async def get_files_inside_folder(folder_name: str):
                 settings.S3_BUCKET, prefix=folder_name, recursive=True
             )
         ]
-        logger.info(file_keys)
     except Exception as e:
         # raise exception if error happened
         raise Exception(f"Could not get files inside folder: {e}")

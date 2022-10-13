@@ -142,7 +142,7 @@ async def check_if_files_exist_in_bucket(
 
         if bucket in s3_resource.buckets.all():
             logger.debug("Bucket exists: {}".format(bucket))
-            
+
             folders = set([key.split("/")[0] for key in file_keys_set])
             all_s3_objects = []
             for folder in folders:

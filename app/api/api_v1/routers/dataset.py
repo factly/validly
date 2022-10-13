@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from aiohttp import ClientSession
 from fastapi import (
     APIRouter,
     File,
@@ -18,7 +19,6 @@ from app.core.config import Settings
 
 # from app.models.date_strftime_pattern import DateStrftimePattern
 from app.models.enums import ExpectationResultFormat, ExpectationResultType
-from aiohttp import ClientSession
 
 # from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
 # from app.models.general import GeneralTableExpectation
@@ -118,7 +118,9 @@ async def execute_dataset_expectation_post_from_url(
 ):
     session = ClientSession()
     try:
-        expectations = await datasets_expectation_from_url(urls, result_type, session = session)
+        expectations = await datasets_expectation_from_url(
+            urls, result_type, session=session
+        )
     except Exception as e:
         logger.exception(f"error: {e}")
         HTTPException(

@@ -5,10 +5,10 @@ from typing import Union
 
 import great_expectations as ge
 import pandas as pd
+from charset_normalizer import from_bytes
 from fastapi.logger import logger
 
 from app.core.config import APP_DIR, GeographySettings
-from charset_normalizer import from_bytes
 
 logging.basicConfig(level=logging.INFO)
 geographic_settings = GeographySettings()
@@ -16,11 +16,13 @@ geographic_settings = GeographySettings()
 
 async def get_file(session, url):
     async with session.get(url) as response:
-            return await response.read()
+        return await response.read()
+
 
 def get_encoding(obj):
     encoding = from_bytes(obj).best().encoding
     return encoding
+
 
 async def read_dataset(
     source: str, s3_client=None, bucket_name: Union[str, None] = None, **kwargs
@@ -32,7 +34,7 @@ async def read_dataset(
             dataset = ge.read_csv(BytesIO(response.data))
             logger.info(f"Dataset read from : {source}")
         except UnicodeDecodeError:
-            encoding = get_encoding(obj = response.data)
+            encoding = get_encoding(obj=response.data)
             dataset = ge.read_csv(BytesIO(response.data), encoding=encoding)
             logger.info(f"Dataset read from : {source} with non-utf8 encoding")
         except Exception as e:
@@ -42,14 +44,14 @@ async def read_dataset(
             response.release_conn()
 
     else:
-        session = kwargs.pop('session')
+        session = kwargs.pop("session")
         try:
             dataset = ge.read_csv(source, **kwargs)
             logger.info(f"Dataset read from : {source}")
         except UnicodeDecodeError:
-            file = await get_file(url = source, session=session)
-            encoding = get_encoding(obj = file)
-            dataset = ge.read_csv(BytesIO(file),encoding = encoding)
+            file = await get_file(url=source, session=session)
+            encoding = get_encoding(obj=file)
+            dataset = ge.read_csv(BytesIO(file), encoding=encoding)
             logger.info(f"Dataset read from : {source} with non-utf8 encoding")
         except Exception as e:
             logger.info(f"Error reading Dataset from : {source}: {e}")

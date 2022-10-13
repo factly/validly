@@ -21,7 +21,9 @@ logging.basicConfig(level=logging.INFO)
 async def dataset_expectation(
     dataset_path, result_type, s3_client, bucket_name, **kwargs
 ):
-    dataset = await read_dataset(dataset_path, s3_client, bucket_name, **kwargs)
+    dataset = await read_dataset(
+        dataset_path, s3_client, bucket_name, **kwargs
+    )
     expectation = await asyncio.gather(
         datetime_expectation_suite(dataset, result_type),
         geography_expectation_suite(dataset, result_type),

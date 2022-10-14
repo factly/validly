@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from aiohttp import ClientSession
 from fastapi import (
     APIRouter,
     File,
@@ -115,8 +116,11 @@ async def execute_dataset_expectation_post_from_url(
     ),
     result_type: ExpectationResultType = Query(ExpectationResultType.SUMMARY),
 ):
+    session = ClientSession()
     try:
-        expectations = await datasets_expectation_from_url(urls, result_type)
+        expectations = await datasets_expectation_from_url(
+            urls, result_type, session=session
+        )
     except Exception as e:
         logger.exception(f"error: {e}")
         HTTPException(
@@ -131,6 +135,8 @@ async def execute_dataset_expectation_post_from_url(
                 "base.html",
                 context={"request": request, "expectations": expectations},
             )
+    finally:
+        await session.close()
 
 
 @router.post(

@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from minio import Minio
 
 from app.core.config import Settings
+from app.utils.airline import airline_name_expectation_suite
 from app.utils.common import read_dataset
 from app.utils.datetime import datetime_expectation_suite
 from app.utils.general import general_table_expectation_suite
@@ -25,6 +26,7 @@ async def dataset_expectation(
     expectation = await asyncio.gather(
         datetime_expectation_suite(dataset, result_type),
         geography_expectation_suite(dataset, result_type),
+        airline_name_expectation_suite(dataset, result_type),
         note_expectation_suite(dataset, result_type),
         unit_expectation_suite(dataset, result_type),
         general_table_expectation_suite(dataset, result_type),

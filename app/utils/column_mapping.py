@@ -2,6 +2,7 @@ import re
 from itertools import chain
 
 from app.core.config import (
+    AirlineSettings,
     DateTimeSettings,
     GeographySettings,
     NoteSettings,
@@ -12,6 +13,7 @@ datetime_settings = DateTimeSettings()
 geography_settings = GeographySettings()
 unit_settings = UnitSettings()
 note_settings = NoteSettings()
+airline_settings = AirlineSettings()
 
 
 def extract_pattern_from_columns(
@@ -70,6 +72,9 @@ async def find_geography_columns(columns: set):
     state_pattern = re.compile(
         r".*({})".format(geography_settings.STATE_KEYWORD)
     )
+    city_pattern = re.compile(
+        r".*({})".format(geography_settings.CITY_KEYWORD)
+    )
 
     country_column, columns = extract_pattern_from_columns(
         columns, country_pattern
@@ -77,11 +82,23 @@ async def find_geography_columns(columns: set):
     state_columns, columns = extract_pattern_from_columns(
         columns, state_pattern
     )
+    city_columns, columns = extract_pattern_from_columns(columns, city_pattern)
 
     return {
         "country": country_column,
         "state": state_columns,
+        "city": city_columns,
     }
+
+
+async def find_airline_name_columns(columns: set):
+    airline_name_pattern = re.compile(
+        r".*({})".format(airline_settings.AIRLINE_NAME_KEYWORD)
+    )
+    airline_name, _ = extract_pattern_from_columns(
+        columns, airline_name_pattern
+    )
+    return {"airline_name": airline_name}
 
 
 async def find_unit_columns(columns: set):
@@ -110,11 +127,13 @@ async def find_mapped_columns(columns):
     geography_columns = await find_geography_columns(columns)
     unit_columns = await find_unit_columns(columns)
     note_columns = await find_note_columns(columns)
+    airline_name_columns = await find_airline_name_columns(columns)
     mapped_columns = {
         **datetime_columns,
         **geography_columns,
         **unit_columns,
         **note_columns,
+        **airline_name_columns,
     }
     not_mapped_columns = list(
         set(columns).difference(

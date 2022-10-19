@@ -1,5 +1,6 @@
 from datetime import date
 
+import numpy as np
 from great_expectations.dataset import MetaPandasDataset, PandasDataset
 
 from app.core.config import CustomExpectationsSettings
@@ -18,7 +19,7 @@ class GenericCustomExpectations(PandasDataset):
         column_list,
         pattern=custom_expectation_settings.TRAIL_OR_LEAD_WHITESPACE_PATTERN,
         meta={
-            "expectation_name": "No leading or traling whitespaces",
+            "expectation_name": "No leading or trailing whitespaces",
         },
     ):
         return column_list.applymap(
@@ -64,3 +65,16 @@ class GenericCustomExpectations(PandasDataset):
         return column.applymap(
             lambda x: not pattern.match(x) if isinstance(x, str) else True
         ).all(axis=1)
+
+    @MetaPandasDataset.multicolumn_map_expectation
+    def expect_multicolumn_dataset_to_have_more_than_x_rows(self, column_list):
+        length = column_list.shape[0]
+        return np.repeat(
+            np.array(
+                (
+                    column_list.index
+                    >= custom_expectation_settings.MINIMUM_DATASET_OBSERVATION_THRESH
+                ).any()
+            ),
+            length,
+        )

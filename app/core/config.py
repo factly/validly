@@ -169,6 +169,7 @@ class GeographySettings(BaseSettings):
 
     COUNTRY_KEYWORD = "country"
     STATE_KEYWORD = "state"
+    CITY_KEYWORD = "city"
     COUNTRY_EXPECTATION = {
         "data_asset_type": None,
         "expectation_suite_name": "country_expectation_suite",
@@ -203,6 +204,49 @@ class GeographySettings(BaseSettings):
                     "expectation_name": "State Name",
                     "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
                     "expectation_error_message": "State Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+    CITY_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "city_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "city",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "City Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "City Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+
+class AirlineSettings(BaseSettings):
+
+    AIRLINE_NAME_KEYWORD: str = "airline"
+    AIRLINE_NAME_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "airline_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "airline",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Airline Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Airline Name should be from the Data Dictionary",
                 },
             }
         ],
@@ -261,31 +305,43 @@ class NoteSettings(BaseSettings):
 
 class CustomExpectationsSettings(BaseSettings):
 
+    NUMERIC_COLUMNS_TYPES = ["float64", "int64"]
+
     TRAIL_OR_LEAD_WHITESPACE_PATTERN = re.compile(r"^\s+.*|.*\s+$")
-    MULTIPLE_BLANKSPACE_PATTERN = re.compile(r".+?[\w]+.+?(\s{2,}).+[\w]+.+")
-    SPECIAL_CHARACTER_PATTERN = re.compile(r".*?[^\)\w\s\.]$")
-    BRACKET_PATTERN = re.compile(r".*([\[\(].+?[\)\]]).*")
-
     LEADING_TRAILING_WHITE_SPACE_EXPECTATION_NAME: str = (
-        "No leading or traling whitespaces"
+        "No leading or trailing whitespaces"
     )
-    MULTIPLE_SPACE_EXPECTATION_NAME: str = "No multiple whitespaces"
-    SPECIAL_CHARACTER_EXPECTATION_NAME: str = (
-        "No special characters in Columns"
-    )
-    BRACKETS_EXPECTATION_NAME: str = "No unnecessary brackets in Categories"
-    DUPLICATE_ROWS_EXPECTATION_NAME: str = "No Duplicate Rows"
-
     LEADING_TRAILING_WHITESPACE_EXPECTATION_ERR_MSG: str = (
         "There should be no leading and trailing white spaces"
     )
+
+    MULTIPLE_BLANKSPACE_PATTERN = re.compile(r".+?[\w]+.+?(\s{2,}).+[\w]+.+")
+    MULTIPLE_SPACE_EXPECTATION_NAME: str = "No multiple whitespaces"
     MULTIPLE_SPACE_EXPECTATION_ERR_MSG: str = (
         "There should be no multiple whitespaces"
     )
+
+    SPECIAL_CHARACTER_PATTERN = re.compile(r".*?[^\)\w\s\.]$")
+    SPECIAL_CHARACTER_EXPECTATION_NAME: str = (
+        "No special characters in Columns"
+    )
     SPECIAL_CHARACTER_EXPECTATION_ERR_MSG: str = "There should be no special character in the category name and measured value, like Telangana** , and any additional information  should be captured in notes instead of using a special character"
+
+    BRACKET_PATTERN = re.compile(r".*([\[\(].+?[\)\]]).*")
+    BRACKETS_EXPECTATION_NAME: str = "No unnecessary brackets in Categories"
     BRACKETS_EXPECTATION_ERR_MSG: str = (
         "Categories should not have unnecessary brackets"
     )
+
+    DUPLICATE_ROWS_EXPECTATION_NAME: str = "No Duplicate Rows"
     DUPLICATE_ROWS_EXPECTATION_ERR_MSG: str = (
         "There should be no duplicate rows in the dataset"
     )
+
+    UNIT_NOTE_COLUMNS = ("unit", "note")
+    NULL_NUMERIC_VALUE_NAME: str = "Null numeric values Flag - {column}"
+    NULL_NUMERIC_VALUE_MSG: str = "Null Numeric values should be cross-checked"
+
+    MINIMUM_DATASET_OBSERVATION_THRESH: int = 10
+    OBSERVATIONS_MORE_THAN_THRESH_NAME: str = "Minimum required observation"
+    OBSERVATIONS_MORE_THAN_THRESH_MSG: str = "Generally the datasets must be more a threshold number of observation ({thresh})"

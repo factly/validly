@@ -5,6 +5,7 @@ import great_expectations as ge
 
 from app.core.config import CustomExpectationsSettings, Settings
 from app.expectations.custom_expectations import GenericCustomExpectations
+from app.models.enums import ExpectationResultType
 
 settings = Settings()
 custom_settings = CustomExpectationsSettings()
@@ -150,6 +151,16 @@ async def null_not_in_numeric_columns(dataset, result_format, column):
             .fillna("")
             .to_dict(orient="records")
         )
+    # partial unexpected index list is not made with this expectation but is required by the studio
+    if (
+        "partial_unexpected_index_list" not in expectation_dict["result"]
+        and result_format == ExpectationResultType.COMPLETE
+    ):
+        expectation_dict["result"][
+            "partial_unexpected_index_list"
+        ] = expectation_dict["result"]["unexpected_index_list"][
+            : max(20, len(expectation_dict["result"]["unexpected_index_list"]))
+        ]
     response = {
         expectation_dict["expectation_config"]["meta"][
             "expectation_name"

@@ -1,6 +1,8 @@
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-</head>
+from pydantic import BaseModel
+
+
+class AllExpectationDocs(BaseModel):
+    state_expectation: str = """
 <h1 class="sub-title is-size-6">State names should standardised these can be reference from data dictionary</h1>
 <strong>Standard State names</strong> :
 <div class="tags are-small">
@@ -107,3 +109,87 @@
         </table>
     </div>
 </div>
+    """
+
+    special_character_expectation: str = """
+<h1 class="sub-title is-size-6">Values inside Table should not have special Character</h1>
+<article>
+    <strong>Special Charaters</strong> : Everythings <strong>excepts</strong> <i>A-Z, a-z, 0-9, "_" , "."</i>
+</article>
+<article>
+    <strong>Example</strong> : For the below example <strong>**</strong> is the special character, it has some significance which is generally provided from the source. Thus this special character is not allowed in the values but must be preserve as additional
+    information inside Notes.
+</article>
+<div class="columns mt-4">
+    <div class="column ml-1 is-two-fifths">
+        <table class="table is-bordered is-narrow is-hoverable is-fullwidth ">
+            <thead>
+                <tr>
+                    <th>fiscal_year</th>
+                    <th>state</th>
+                    <th>value</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td colspan="3">** Means values for that 2020-21 are provisional</td>
+
+
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr>
+                    <td>2018-19</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1000000</td>
+                </tr>
+                <tr>
+                    <td>2019-20</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1100000</td>
+                </tr>
+                <tr class="has-background-danger-light">
+                    <td>2020-21**</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1300000</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="column mr-1 is-size-6">
+        <table class="table is-bordered is-narrow is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>fiscal_year</th>
+                    <th>state</th>
+                    <th>value</th>
+                    <th>note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2018-19</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1000000</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2019-20</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1100000</td>
+                    <td></td>
+
+                </tr>
+                <tr class="has-background-success-light">
+                    <td>2020-21</td>
+                    <td>Andhra Pradesh</td>
+                    <td>1300000</td>
+                    <td>fiscal_year : Provisional value</td>
+                </tr>
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+    """

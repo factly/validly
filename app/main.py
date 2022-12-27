@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from app.api.api_v1.routers.metadata import metadata_router
 
 # from app.api.api_v1.routers.column_mapping import column_mapper_router
 from app.api.api_v1.routers.dataset import dataset_router
@@ -60,4 +61,6 @@ app.include_router(dataset_router, prefix="", tags=["Compare Datasets"])
 # app.include_router(documentation_router, prefix="", tags=["Documentation"])
 
 app.include_router(s3_router, prefix="/s3", tags=["S3 Checks"])
+
+app.include_router(metadata_router, prefix="", tags=["Metadata"])
 # app.include_router(column_router, prefix="/column", tags=["Column"])

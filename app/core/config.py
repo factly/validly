@@ -256,7 +256,8 @@ class AirlineSettings(BaseSettings):
 class UnitSettings(BaseSettings):
 
     UNIT_KEYWORD = "unit"
-    UNIT_PATTERN = [r",?.+?in[^,]+[,]?"]
+    # UNIT_PATTERN = [r",?.+?in[^,]+[,]?"]
+    UNIT_PATTERN = [r"(\s?([a-z_0-9]+\sin\s[\w -]+)+[,]?)"]
     UNIT_EXPECTATION = {
         "data_asset_type": None,
         "expectation_suite_name": "unit_expectation_suite",
@@ -265,7 +266,8 @@ class UnitSettings(BaseSettings):
                 "expectation_type": "expect_column_values_to_match_regex_list",
                 "kwargs": {
                     "column": "unit",
-                    "regex_list": [",?.+?in[^,]+[,]?"],
+                    # "regex_list": [",?.+?in[^,]+[,]?"],
+                    "regex_list": [r"(\s?([a-z_0-9]+\sin\s[\w -]+)+[,]?)"],
                     "result_format": "SUMMARY",
                 },
                 "meta": {
@@ -294,7 +296,7 @@ class NoteSettings(BaseSettings):
                     "result_format": "SUMMARY",
                 },
                 "meta": {
-                    "expectation_name": "Unit Format",
+                    "expectation_name": "Note Format",
                     "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
                     "expectation_error_message": "Note should be in proper format as 'column_name:note'",
                 },
@@ -342,6 +344,200 @@ class CustomExpectationsSettings(BaseSettings):
     NULL_NUMERIC_VALUE_NAME: str = "Null numeric values Flag - {column}"
     NULL_NUMERIC_VALUE_MSG: str = "Null Numeric values should be cross-checked"
 
+    NULL_CATEGORICAL_VALUE_NAME: str = "Null values Flag - {column}"
+    NULL_CATEGORICAL_VALUE_MSG: str = "Null values should not present in this column"
+
     MINIMUM_DATASET_OBSERVATION_THRESH: int = 10
     OBSERVATIONS_MORE_THAN_THRESH_NAME: str = "Minimum required observation"
     OBSERVATIONS_MORE_THAN_THRESH_MSG: str = "Generally the datasets must be more a threshold number of observation ({thresh})"
+
+class MetadataSettings(BaseSettings):
+
+    SECTOR_KEYWORD = "sector"
+    ORGANIZATION_KEYWORD = "organization"
+    SHORT_FORM_KEYWORD = "short_form"
+
+    DESCRIPTION_KEYWORD = "description"
+    DATASET_NAME_FOR_FACTLY_KEYWORD = "dataset_name_for_factly"
+    GRANULARITY_KEYWORD = "granularity"
+    TIME_SAVED_IN_HOURS_KEYWORD = "time_saved_in_hours"
+    FILE_PATH_KEYWORD = "file_path"
+    FREQUENCY_OF_UPDATE_KEYWORD = "frequency_of_update"
+    SOURCE_LINK_KEYWORD = "source_link"
+    # ARCHIVE_KEYWORD = "archive"
+    TEMPORAL_COVERAGE_KEYWORD = "temporal_coverage"
+    SPACIAL_COVERAGE_KEYWORD = "spatial_coverage"
+    VARIABLE_MEASURED_KEYWORD = "variable_measured"
+    DATA_NEXT_UPDATE_KEYWORD = "data_next_update"
+    SOURCE_KEYWORD = "source"
+    SECTOR_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "sector_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "sector",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Sector Name in set of values",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Sector Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+    ORGANIZATION_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "organization_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "organization",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Organization Name in set of values",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Organization Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+    SHORT_FORM_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "short_form_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "short_form",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Short Form in set of values",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Short Form should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+    FREQUENCY_OF_UPDATE_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "frequency_of_update_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "frequency_of_update",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Frequency of Update in set of values",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Frequency of Update should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+    FILE_PATH_PATTERN = [r"(s3:\/\/[a-z0-9\/._]*)"]
+    FILE_PATH_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "file_path_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_match_regex_list",
+                "kwargs": {
+                    "column": "file_path",
+                    # "regex_list": [",?.+?in[^,]+[,]?"],
+                    "regex_list": [r"(s3:\/\/[a-z0-9\/._]*)"],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "File Path in proper format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "File Path should be of specific pattern",
+                },
+            }
+        ],
+    }
+
+    DATA_NEXT_UPDATE_PATTERN = [r"(\d{1,2}-\d{1,2}-\d{4})"]
+    DATA_NEXT_UPDATE_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "data_next_update_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_match_regex_list",
+                "kwargs": {
+                    "column": "data_next_update",
+                    # "regex_list": [",?.+?in[^,]+[,]?"],
+                    "regex_list": [r"(\d{1,2}-\d{1,2}-\d{4})"],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Data Next Update in proper format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Data Next Update should be of specific pattern",
+                },
+            }
+        ],
+    }
+
+    TIME_SAVED_IN_HOURS_NAME: str = "Null values in columns - {column}"
+    TIME_SAVED_IN_HOURS_MSG: str = "Null values should not present in these columns"
+    # TIME_SAVED_IN_HOURS_EXPECTATION = {
+    #     "data_asset_type": None,
+    #     "expectation_suite_name": "time_saved_in_hours_expectation_suite",
+    #     "expectations": [
+    #         {
+    #             "expectation_type": "expect_column_values_to_be_in_set",
+    #             "kwargs": {
+    #                 "column": "time_saved_in_hours",
+    #                 "value_set": [],
+    #                 "result_format": "SUMMARY",
+    #             },
+    #             "meta": {
+    #                 "expectation_name": "Time Saved In Hours",
+    #                 "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+    #                 "expectation_error_message": "Time Saved in Hours should be from the range of 2 to 6 hours",
+    #             },
+    #         }
+    #     ],
+    # }
+
+
+class TagsSettings(BaseSettings):
+
+    TAGS_KEYWORD = "tags"
+    TAGS_PATTERN = [r"([a-z 0-9,]*)"]
+    TAGS_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "tags_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_match_regex_list",
+                "kwargs": {
+                    "column": "tags",
+                    # "regex_list": [",?.+?in[^,]+[,]?"],
+                    "regex_list": [r"([a-z 0-9,]*)"],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Tags in proper format",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Tags should be in proper format as 'valueone, value-two'",
+                },
+            }
+        ],
+    }

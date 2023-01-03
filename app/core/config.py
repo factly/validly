@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Dict, List
 
 from pydantic import BaseSettings
 
@@ -50,6 +51,10 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     S3_SOURCE_SECRET_KEY: str = ...
     S3_SOURCE_ENDPOINT_URL: str = ...
     S3_SOURCE_RESOURCE: str = "s3"
+
+    # GOOGLE CONFIGURATION
+    SERVICE_ACCOUNT_CONF: Dict[str, str] = {"<CHANGE_ME>": "<CHANGE_ME>"}
+    GSHEET_SCOPES: List[str] = ["https://www.googleapis.com/auth/spreadsheets"]
 
     class Config:
         env_file = ".env"
@@ -345,11 +350,14 @@ class CustomExpectationsSettings(BaseSettings):
     NULL_NUMERIC_VALUE_MSG: str = "Null Numeric values should be cross-checked"
 
     NULL_CATEGORICAL_VALUE_NAME: str = "Null values Flag - {column}"
-    NULL_CATEGORICAL_VALUE_MSG: str = "Null values should not present in this column"
+    NULL_CATEGORICAL_VALUE_MSG: str = (
+        "Null values should not present in this column"
+    )
 
     MINIMUM_DATASET_OBSERVATION_THRESH: int = 10
     OBSERVATIONS_MORE_THAN_THRESH_NAME: str = "Minimum required observation"
     OBSERVATIONS_MORE_THAN_THRESH_MSG: str = "Generally the datasets must be more a threshold number of observation ({thresh})"
+
 
 class MetadataSettings(BaseSettings):
 
@@ -495,7 +503,9 @@ class MetadataSettings(BaseSettings):
     }
 
     TIME_SAVED_IN_HOURS_NAME: str = "Null values in columns - {column}"
-    TIME_SAVED_IN_HOURS_MSG: str = "Null values should not present in these columns"
+    TIME_SAVED_IN_HOURS_MSG: str = (
+        "Null values should not present in these columns"
+    )
     # TIME_SAVED_IN_HOURS_EXPECTATION = {
     #     "data_asset_type": None,
     #     "expectation_suite_name": "time_saved_in_hours_expectation_suite",

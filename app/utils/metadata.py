@@ -5,9 +5,6 @@ import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
 from app.core.config import APP_DIR, MetadataSettings, Settings
-from app.utils.unit import unit_expectation_suite
-from app.utils.tags import tags_expectation_suite
-from app.utils.general import general_metadata_expectation_suite
 from app.utils.column_mapping import find_metadata_columns
 from app.utils.common import (
     modify_values_to_be_in_set,
@@ -15,8 +12,9 @@ from app.utils.common import (
     read_dataset,
     read_pandas_dataset,
 )
-from pprint import pprint
-import pandas as pd
+from app.utils.general import general_metadata_expectation_suite
+from app.utils.tags import tags_expectation_suite
+from app.utils.unit import unit_expectation_suite
 
 settings = Settings()
 meta_data_setting = MetadataSettings()
@@ -28,9 +26,7 @@ async def modify_sector_expectation_suite(
 
     default_expectation_suite = meta_data_setting.SECTOR_EXPECTATION
 
-    sector_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "sector.csv"
-    )
+    sector_dataset = await read_pandas_dataset(APP_DIR / "core" / "sector.csv")
     sector_list = sector_dataset["sector"].tolist()
 
     changed_config = {
@@ -47,7 +43,7 @@ async def modify_sector_expectation_suite(
 
 
 async def sector_expectation_suite(dataset, result_format):
-    """ Expectation to check if Sector values are in sector.csv
+    """Expectation to check if Sector values are in sector.csv
 
     Expectation is on whether every value present in sector column of metadata
     csv is in sector.csv file or not
@@ -77,9 +73,7 @@ async def sector_expectation_suite(dataset, result_format):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
@@ -110,7 +104,7 @@ async def modify_organization_expectation_suite(
 
 
 async def organization_expectation_suite(dataset, result_format):
-    """ Expectation to check if Organization values are in organization.csv
+    """Expectation to check if Organization values are in organization.csv
 
     Expectation is on whether every value present in organization column of metadata
     csv is in organization.csv file or not
@@ -139,9 +133,7 @@ async def organization_expectation_suite(dataset, result_format):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
@@ -172,7 +164,7 @@ async def modify_short_form_expectation_suite(
 
 
 async def short_form_expectation_suite(dataset, result_format):
-    """ Expectation to check if Short Form values are in short_form.csv
+    """Expectation to check if Short Form values are in short_form.csv
 
     Expectation is on whether every value present in short form column of metadata
     csv is in short_form.csv file or not
@@ -201,9 +193,7 @@ async def short_form_expectation_suite(dataset, result_format):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
@@ -213,12 +203,16 @@ async def short_form_expectation_suite(dataset, result_format):
 async def modify_frequency_of_update_expectation_suite(
     column_name: str, result_format: str
 ):
-    default_expectation_suite = meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
+    default_expectation_suite = (
+        meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
+    )
 
     frequency_of_update_dataset = await read_pandas_dataset(
         APP_DIR / "core" / "frequency_of_update.csv"
     )
-    frequency_of_update_list = frequency_of_update_dataset["frequency_of_update"].tolist()
+    frequency_of_update_list = frequency_of_update_dataset[
+        "frequency_of_update"
+    ].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -234,7 +228,7 @@ async def modify_frequency_of_update_expectation_suite(
 
 
 async def frequency_of_update_expectation_suite(dataset, result_format):
-    """ Expectation to check if Frequency of Update values are in frequency_of_update.csv
+    """Expectation to check if Frequency of Update values are in frequency_of_update.csv
 
     Expectation is on whether every value present in Frequency of update column of metadata
     csv is in frequency_of_update.csv file or not
@@ -263,16 +257,16 @@ async def frequency_of_update_expectation_suite(dataset, result_format):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
     return jsonable_encoder(results)
 
 
-async def modify_file_path_expectation_suite(column_name: str, result_format: str):
+async def modify_file_path_expectation_suite(
+    column_name: str, result_format: str
+):
     default_expectation_suite = meta_data_setting.FILE_PATH_EXPECTATION
 
     changed_config = {
@@ -317,16 +311,16 @@ async def file_path_expectation_suite(dataset, result_format: str):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
     return jsonable_encoder(results)
 
 
-async def modify_data_next_update_expectation_suite(column_name: str, result_format: str):
+async def modify_data_next_update_expectation_suite(
+    column_name: str, result_format: str
+):
     default_expectation_suite = meta_data_setting.DATA_NEXT_UPDATE_EXPECTATION
 
     changed_config = {
@@ -371,9 +365,7 @@ async def data_next_update_expectation_suite(dataset, result_format: str):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 
@@ -396,17 +388,18 @@ async def time_saved_in_hours_expectation_suite(dataset, result_format):
     mapped_columns = await find_metadata_columns(set(dataset.columns))
     time_saved_in_hours_column = mapped_columns["time_saved_in_hours"][0]
     expectation_name = meta_data_setting.TIME_SAVED_IN_HOURS_NAME.format(
-            column=time_saved_in_hours_column
-        )
+        column=time_saved_in_hours_column
+    )
     expectation_error_message = meta_data_setting.TIME_SAVED_IN_HOURS_MSG
 
-    ge_pandas_dataset = ge.from_pandas(
-        dataset
-    )
+    ge_pandas_dataset = ge.from_pandas(dataset)
 
     expectation = ge_pandas_dataset.expect_column_values_to_be_between(
-        column=time_saved_in_hours_column, min_value=2, max_value=6, catch_exceptions=True,
-        result_format=result_format
+        column=time_saved_in_hours_column,
+        min_value=2,
+        max_value=6,
+        catch_exceptions=True,
+        result_format=result_format,
     )
 
     expectation_dict = expectation.to_json_dict()
@@ -423,8 +416,10 @@ async def time_saved_in_hours_expectation_suite(dataset, result_format):
     return response
 
 
-async def metadata_expectation_suite(dataset, result_format):
-    """Chaining all expectaion suites
+async def metadata_expectation_suite(
+    dataset, result_format, dataset_name: str
+):
+    """Chaining all expectation suites
 
     Chianmap every expectation suite and running all of them asynchronously
 
@@ -451,4 +446,4 @@ async def metadata_expectation_suite(dataset, result_format):
         general_metadata_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
-    return expectations 
+    return {dataset_name: jsonable_encoder(expectations)}

@@ -27,8 +27,10 @@ async def execute_metadata_expectation_from_file(
     logger.info(f"dataset: {datasets.filename}")
     df = pd.read_csv(datasets.file)
 
-    # metadata expectatation
-    expectation = await metadata_expectation_suite(df, result_type)
+    # metadata expectation
+    expectation = await metadata_expectation_suite(
+        df, result_type, dataset_name=datasets.filename
+    )
 
     return expectation
 
@@ -59,5 +61,12 @@ async def execute_metadata_expectation_gsheet(request: MetadataGsheetRequest):
     df = pd.DataFrame(dataset_meta_data)
 
     # metadata expectation
-    expectation = await metadata_expectation_suite(df, request.result_type)
+    dataset_name = (
+        f"{request.sheet_id}-{request.worksheet}"
+        if request.worksheet
+        else f"{request.sheet_id}"
+    )
+    expectation = await metadata_expectation_suite(
+        df, request.result_type, dataset_name=dataset_name
+    )
     return expectation

@@ -8,29 +8,29 @@ from app.models.column_mapping import (
     AllMappedColumns,
     DateTimeColumns,
     GeographyColumns,
-    NoteColumns,
-    UnitColumns,
     MetadataColumns,
+    NoteColumns,
     TagsColumns,
+    UnitColumns,
 )
 from app.models.enums import ExpectationResultType
 from app.utils.column_mapping import (
     find_datetime_columns,
     find_geography_columns,
     find_mapped_columns,
-    find_note_columns,
-    find_unit_columns,
     find_metadata_columns,
+    find_note_columns,
     find_tags_columns,
+    find_unit_columns,
 )
 from app.utils.common import read_dataset
 from app.utils.datetime import datetime_expectation_suite
 from app.utils.general import general_table_expectation_suite
 from app.utils.geography import geography_expectation_suite
-from app.utils.note import note_expectation_suite
-from app.utils.unit import unit_expectation_suite
 from app.utils.metadata import metadata_expectation_suite
+from app.utils.note import note_expectation_suite
 from app.utils.tags import tags_expectation_suite
+from app.utils.unit import unit_expectation_suite
 
 settings = Settings()
 datetime_settings = DateTimeSettings()

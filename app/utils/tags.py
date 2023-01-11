@@ -4,6 +4,7 @@ import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
 from app.core.config import TagsSettings
+
 # from app.utils.column_mapping import find_tags_columns
 from app.utils.column_mapping import find_metadata_columns
 from app.utils.common import modify_values_to_match_regex_list
@@ -58,9 +59,7 @@ async def tags_expectation_suite(dataset, result_format: str):
             "expectation_name"
         ]
         + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"][
-            "column"
-        ]
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
 

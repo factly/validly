@@ -1,16 +1,17 @@
 import re
 from itertools import chain
+from typing import Dict
 
 from app.core.config import (
     AirlineSettings,
     DateTimeSettings,
     GeographySettings,
-    NoteSettings,
-    UnitSettings,
     MetadataSettings,
-    TagsSettings
+    NoteSettings,
+    TagsSettings,
+    UnitSettings,
 )
-from typing import Dict
+
 datetime_settings = DateTimeSettings()
 geography_settings = GeographySettings()
 unit_settings = UnitSettings()
@@ -30,7 +31,7 @@ def extract_pattern_from_columns(
 
     Args:
         columns (set[str]): All column names from the dataframe to extract
-        pattern (_type_): Regex pattern for particular columns  
+        pattern (_type_): Regex pattern for particular columns
 
     Returns:
         Dict[str, set[str]]: Map column names according to their category types
@@ -159,9 +160,7 @@ async def find_metadata_columns(columns: set):
     description_pattern = re.compile(
         r".*({}).*".format(metadata_settings.DESCRIPTION_KEYWORD)
     )
-    tags_pattern = re.compile(
-        r".*({}).*".format(tags_settings.TAGS_KEYWORD)
-    )
+    tags_pattern = re.compile(r".*({}).*".format(tags_settings.TAGS_KEYWORD))
     temporal_coverage_pattern = re.compile(
         r".*({}).*".format(metadata_settings.TEMPORAL_COVERAGE_KEYWORD)
     )
@@ -208,9 +207,7 @@ async def find_metadata_columns(columns: set):
     description_column, columns = extract_pattern_from_columns(
         columns, description_pattern
     )
-    tags_column, columns = extract_pattern_from_columns(
-        columns, tags_pattern
-    )
+    tags_column, columns = extract_pattern_from_columns(columns, tags_pattern)
     temporal_coverage_column, columns = extract_pattern_from_columns(
         columns, temporal_coverage_pattern
     )
@@ -256,7 +253,7 @@ async def find_metadata_columns(columns: set):
         "granularity": list(granularity_column),
         "time_saved_in_hours": list(time_saved_in_hours_column),
         "file_path": list(file_path_column),
-        "frequency_of_update":  list(frequency_of_update_column),
+        "frequency_of_update": list(frequency_of_update_column),
         "source_link": list(source_link_column),
         # "archive":  list(archive_column),
         "spacial_coverage": list(spacial_coverage_column),

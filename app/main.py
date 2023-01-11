@@ -2,11 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.api.api_v1.routers.metadata import metadata_router
 
 # from app.api.api_v1.routers.column_mapping import column_mapper_router
 from app.api.api_v1.routers.dataset import dataset_router
 from app.api.api_v1.routers.docs import docs_router
+from app.api.api_v1.routers.metadata import metadata_router
 
 # from app.api.api_v1.routers.datetime import datetime_router
 # from app.api.api_v1.routers.documentation import documentation_router

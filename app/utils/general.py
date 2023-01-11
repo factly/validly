@@ -3,7 +3,11 @@ from collections import ChainMap
 
 import great_expectations as ge
 
-from app.core.config import CustomExpectationsSettings, Settings, MetadataSettings
+from app.core.config import (
+    CustomExpectationsSettings,
+    MetadataSettings,
+    Settings,
+)
 from app.expectations.custom_expectations import GenericCustomExpectations
 from app.models.enums import ExpectationResultType
 from app.utils.column_mapping import find_metadata_columns
@@ -146,7 +150,9 @@ async def null_not_in_columns(dataset, result_format, column, column_type):
         dataset, dataset_class=GenericCustomExpectations
     )
     expectation = ge_pandas_dataset.expect_column_values_to_not_be_null(
-        column=column, catch_exceptions=True, result_format=result_format,
+        column=column,
+        catch_exceptions=True,
+        result_format=result_format,
     )
     # expectation = ge_pandas_dataset.expect_column_values_to_not_be_null(
     #     column=column, result_format=result_format, catch_exceptions=True
@@ -216,7 +222,8 @@ async def observation_more_than_thresh_expectation_suite(
 async def general_table_expectation_suite(dataset, result_format):
     """Chaining all general expectaion suites for Datasets
 
-    Chianmap required general expectation suites(ex: duplicates, whitespaces, not null) and running all of them asynchronously
+    Chianmap required general expectation suites(ex: duplicates, whitespaces,
+    not null) and running all of them asynchronously
 
     Args:
         dataset (Dataframe): Read metadata csv using Pandas Dataframe
@@ -246,18 +253,17 @@ async def general_table_expectation_suite(dataset, result_format):
             null_not_in_columns(dataset, result_format, col, "numeric")
             for col in numeric_columns
         ],
-
-        observation_more_than_thresh_expectation_suite(dataset, result_format)
+        observation_more_than_thresh_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
     return expectations
 
 
-
 async def general_metadata_expectation_suite(dataset, result_format):
     """Chaining all general expectaion suites for Metadata
 
-    Chianmap required general expectation suites(ex: duplicates, whitespaces, not null) and running all of them asynchronously
+    Chianmap required general expectation suites(ex: duplicates, whitespaces,
+    not null) and running all of them asynchronously
 
     Args:
         dataset (Dataframe): Read metadata csv using Pandas Dataframe
@@ -267,8 +273,13 @@ async def general_metadata_expectation_suite(dataset, result_format):
         Dict: Dictionary of Expectations of all Expectation suites running
     """
 
-    categorical_columns_dict = await find_metadata_columns(set(dataset.columns))
-    categorical_columns = [each_columns_value[0] for each_columns_value in categorical_columns_dict.values()]
+    categorical_columns_dict = await find_metadata_columns(
+        set(dataset.columns)
+    )
+    categorical_columns = [
+        each_columns_value[0]
+        for each_columns_value in categorical_columns_dict.values()
+    ]
 
     categorical_columns = [
         categorical_column
@@ -289,14 +300,10 @@ async def general_metadata_expectation_suite(dataset, result_format):
         duplicates_expectation_suite(dataset, result_format),
         leading_trailing_whitespace_expectation_suite(dataset, result_format),
         multispaces_between_text_expectation_suite(dataset, result_format),
-
         *[
-                null_not_in_columns(dataset, result_format, col, "category")
-                for col in categorical_columns
+            null_not_in_columns(dataset, result_format, col, "category")
+            for col in categorical_columns
         ],
     )
     expectations = ChainMap(*expectations)
     return expectations
-
-
-

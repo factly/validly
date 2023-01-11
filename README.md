@@ -57,4 +57,37 @@ docker compose stop
 docker compose down
 ```
 
+----------------------------------------------------------------
+
+# Metadata Validations
+
+
+## WHAT ? 
+
+Validly is a fast-api application that helps to validate specific domain of columns in csv metadata datasets with the help of Great-expectation
+
+------ 
+
+## WHY ? 
+
+Lets consider an arbitrary metadata sheet which gives you detail about AISHE : 
+
+|sector|organization|short_form|....|time_saved_in_hours|price|
+|-|-|-|-|-|-|
+|Educations||AISHE|....|4|1996|
+
+Suppose , if there is no data-quality check after, data-cleaning then there would be certain issues that an analyst might face like : 
+- Sector, organization, etc columns values should take only few expected values only
+- Time Saved in Hours should be in the range of 2 - 6 hours
+- There should be few columns which doesnt accept null values 
+..... *and the list may goes on*
+
+So, ideally the dataset should look like : 
+
+|sector|organization|short_form|....|time_saved_in_hours|price|
+|-|-|-|....|-|-|
+|Education|All India Survey on Higher Education|AISHE|....|4|1996|
+
+If there would be a tool where a user can upload its `metadata/csv` file and can figure out its potential problems then metadata sheet can be revisited and updated properly.
+
 ------

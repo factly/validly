@@ -4,7 +4,9 @@ from typing import Dict, List
 
 from pydantic import BaseSettings
 
-APP_DIR = Path(__file__).resolve().parents[1]
+FILE_PATH = Path(__file__).resolve()
+APP_DIR = FILE_PATH.parents[1]
+CORE_FOLDER = FILE_PATH.parents[0]
 
 
 class Settings(BaseSettings):

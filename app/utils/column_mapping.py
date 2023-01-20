@@ -1,6 +1,6 @@
 import re
 from itertools import chain
-from typing import Dict
+from typing import Dict, Set
 
 from app.core.config import (
     AirlineSettings,
@@ -22,9 +22,9 @@ tags_settings = TagsSettings()
 
 
 def extract_pattern_from_columns(
-    columns: set[str],
+    columns: Set[str],
     pattern,
-) -> Dict[str, set[str]]:
+) -> Dict[str, Set[str]]:
     """Match regex pattern against columns to extract column names from
 
     _extended_summary_

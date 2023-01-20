@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
 
 import gspread
+from fastapi import HTTPException, status
 from google.oauth2 import service_account
 
 from app.core.config import Settings
@@ -28,7 +29,16 @@ def get_records_from_gsheets(
     client = gspread.authorize(credentials)
 
     # get the instance of the Spreadsheet
-    sheet = client.open_by_key(sheet_id)
+    try:
+        sheet = client.open_by_key(sheet_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "error": f"{e}",
+                "message": "This caller does not have permission for the sheet",
+            },
+        )
 
     # get the very first worksheet present if no tab is mentioned
     # tab is worksheet window inside Gsheets

@@ -62,12 +62,13 @@ async def sector_expectation_suite(dataset, result_format):
     expectation_suite = await modify_sector_expectation_suite(
         sector_column, result_format
     )
+
     # convert pandas dataset to great_expectations dataset
     ge_pandas_dataset = ge.from_pandas(
         dataset, expectation_suite=expectation_suite
     )
-    validation = ge_pandas_dataset.validate()
 
+    validation = ge_pandas_dataset.validate()
     validation_ui_name = (
         validation["results"][0]["expectation_config"]["meta"][
             "expectation_name"
@@ -123,11 +124,13 @@ async def organization_expectation_suite(dataset, result_format):
     expectation_suite = await modify_organization_expectation_suite(
         organization_column, result_format
     )
+
     # convert pandas dataset to great_expectations dataset
     ge_pandas_dataset = ge.from_pandas(
         dataset, expectation_suite=expectation_suite
     )
     validation = ge_pandas_dataset.validate()
+
     validation_ui_name = (
         validation["results"][0]["expectation_config"]["meta"][
             "expectation_name"
@@ -433,8 +436,17 @@ async def metadata_expectation_suite(
     if isinstance(dataset, str):
         dataset = await read_dataset(dataset)
 
+    # Dataset modification for sector expectation suite
+    dataset_sector = dataset.copy()
+    # explode the dataset based on sector column
+    dataset_sector["sectors"] = dataset_sector["sectors"].apply(
+        lambda x: x.split(",")
+    )
+    dataset_sector = dataset_sector.explode("sectors").reset_index(drop=True)
+    dataset_sector["sectors"] = dataset_sector["sectors"].str.strip()
+
     expectations = await asyncio.gather(
-        sector_expectation_suite(dataset, result_format),
+        sector_expectation_suite(dataset_sector, result_format),
         organization_expectation_suite(dataset, result_format),
         short_form_expectation_suite(dataset, result_format),
         unit_expectation_suite(dataset, result_format),

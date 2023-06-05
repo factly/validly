@@ -25,7 +25,11 @@ def get_encoding(obj):
 
 
 async def read_dataset(
-    source: str, s3_client=None, bucket_name: Union[str, None] = None, **kwargs
+    source: str,
+    s3_client=None,
+    bucket_name: Union[str, None] = None,
+    is_file: bool = False,
+    **kwargs,
 ) -> ge.dataset.pandas_dataset.PandasDataset:
     if s3_client:
         # dataset should be downloaded from s3 storage
@@ -42,7 +46,19 @@ async def read_dataset(
         finally:
             response.close()
             response.release_conn()
-
+    elif is_file:
+        try:
+            file = source.file.read()
+            dataset = ge.read_csv(BytesIO(file))
+            logger.info(f"Dataset read from : {source.filename}")
+        except UnicodeDecodeError:
+            encoding = get_encoding(obj=file)
+            dataset = ge.read_csv(BytesIO(file), encoding=encoding)
+            logger.info(
+                f"Dataset read from : {source.filename} with non-utf8 encoding"
+            )
+        except Exception as e:
+            logger.info(f"Error reading Dataset from : {source.filename}: {e}")
     else:
         session = kwargs.pop("session")
         try:

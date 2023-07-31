@@ -1,5 +1,5 @@
 import asyncio
-from typing import Set
+from typing import List
 from urllib.parse import urlparse
 
 import boto3
@@ -33,6 +33,7 @@ async def check_file_metadata(session, file_key: str):
     file_parts = urlparse(file_key)
     bucket, obj_key = file_parts.netloc, file_parts.path.lstrip("/")
     obj = session.ObjectSummary(bucket, obj_key)
+    logger.info(f"Checking for key: {file_key}")
 
     # get the metadata
     try:
@@ -44,8 +45,8 @@ async def check_file_metadata(session, file_key: str):
         return jsonable_encoder(metadata)
 
 
-async def check_files_metadata(session, file_keys: Set[str]):
+async def check_files_metadata(session, file_keys: List[str]):
     files_metadata = await asyncio.gather(
         *[check_file_metadata(session, file_key) for file_key in file_keys]
     )
-    return jsonable_encoder(files_metadata)
+    return files_metadata

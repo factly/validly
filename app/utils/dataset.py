@@ -11,6 +11,7 @@ from app.utils.common import read_dataset
 from app.utils.datetime import datetime_expectation_suite
 from app.utils.general import general_table_expectation_suite
 from app.utils.geography import geography_expectation_suite
+from app.utils.insurance import insurance_company_name_expectation_suite
 from app.utils.note import note_expectation_suite
 from app.utils.unit import unit_expectation_suite
 
@@ -29,6 +30,7 @@ async def dataset_expectation(
         datetime_expectation_suite(dataset, result_type),
         geography_expectation_suite(dataset, result_type),
         airline_name_expectation_suite(dataset, result_type),
+        insurance_company_name_expectation_suite(dataset, result_type),
         note_expectation_suite(dataset, result_type),
         unit_expectation_suite(dataset, result_type),
         general_table_expectation_suite(dataset, result_type),

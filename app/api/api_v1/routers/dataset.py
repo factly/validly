@@ -51,21 +51,6 @@ async def execute_dataset_expectation(request: Request):
 
 @router.post(
     "/expectation/datasets/",
-    # response_model=Dict[
-    #     str,
-    #     Dict[
-    #         str,
-    #         Union[
-    #             List[GeneralTableExpectation],
-    #             RegexPatternExpectation,
-    #             RegexMatchList,
-    #             ColumnValuesToBeInSet,
-    #             DateStrftimePattern,
-    #         ],
-    #     ],
-    # ],
-    # response_model_exclude_none=True,
-    # response_model_exclude_unset=True,
     summary="Execute all possible expectation to a dataset",
 )
 async def execute_dataset_expectation_post(

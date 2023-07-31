@@ -6,6 +6,7 @@ from app.core.config import (
     AirlineSettings,
     DateTimeSettings,
     GeographySettings,
+    InsuranceCompanySettings,
     MetadataSettings,
     NoteSettings,
     TagsSettings,
@@ -17,6 +18,7 @@ geography_settings = GeographySettings()
 unit_settings = UnitSettings()
 note_settings = NoteSettings()
 airline_settings = AirlineSettings()
+insurance_company_settings = InsuranceCompanySettings()
 metadata_settings = MetadataSettings()
 tags_settings = TagsSettings()
 
@@ -90,7 +92,7 @@ async def find_geography_columns(columns: set):
         r".*({})".format(geography_settings.STATE_KEYWORD)
     )
     city_pattern = re.compile(
-        r".*({})".format(geography_settings.CITY_KEYWORD)
+        r".*({})".format(geography_settings.DISTRICT_KEYWORD)
     )
 
     country_column, columns = extract_pattern_from_columns(
@@ -116,6 +118,18 @@ async def find_airline_name_columns(columns: set):
         columns, airline_name_pattern
     )
     return {"airline_name": airline_name}
+
+
+async def find_insurance_company_columns(columns: set):
+    insurance_name_pattern = re.compile(
+        r".*({})".format(
+            insurance_company_settings.INSURANCE_COMPANY_NAME_KEYWORD
+        )
+    )
+    airline_name, _ = extract_pattern_from_columns(
+        columns, insurance_name_pattern
+    )
+    return {"insurance_name": airline_name}
 
 
 async def find_unit_columns(columns: set):
@@ -269,6 +283,9 @@ async def find_mapped_columns(columns):
     unit_columns = await find_unit_columns(columns)
     note_columns = await find_note_columns(columns)
     airline_name_columns = await find_airline_name_columns(columns)
+    insurance_company_name_columns = await find_insurance_company_columns(
+        columns
+    )
     metadata_columns = await find_metadata_columns(columns)
     mapped_columns = {
         **datetime_columns,
@@ -277,6 +294,7 @@ async def find_mapped_columns(columns):
         **note_columns,
         **airline_name_columns,
         **metadata_columns,
+        **insurance_company_name_columns,
     }
     not_mapped_columns = list(
         set(columns).difference(

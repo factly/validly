@@ -19,8 +19,8 @@ geograhy_setting = GeographySettings()
 async def modify_city_expectation_suite(column_name: str, result_format: str):
     default_expectation_suite = geograhy_setting.STATE_EXPECTATION
 
-    city_dataset = await read_pandas_dataset(APP_DIR / "core" / "city.csv")
-    city_list = city_dataset["city"].tolist()
+    city_dataset = await read_pandas_dataset(APP_DIR / "core" / "district.csv")
+    city_list = city_dataset["districts"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -38,6 +38,7 @@ async def modify_city_expectation_suite(column_name: str, result_format: str):
 async def city_expectation_suite(dataset, result_format):
     results = {}
     geography_columns = await find_geography_columns(set(dataset.columns))
+
     for each_column in geography_columns["city"]:
         expectation_suite = await modify_city_expectation_suite(
             each_column, result_format

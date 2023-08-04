@@ -577,3 +577,27 @@ class InsuranceCompanySettings(BaseSettings):
             }
         ],
     }
+
+
+class PsuCompanySettings(BaseSettings):
+
+    PSU_COMPANY_NAME_KEYWORD: str = "psu_companies"
+    PSU_COMPANY_NAME_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "psu_company_name_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "psu_companies",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "PSU Company Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "PSU Company Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }

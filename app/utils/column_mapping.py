@@ -9,6 +9,7 @@ from app.core.config import (
     InsuranceCompanySettings,
     MetadataSettings,
     NoteSettings,
+    PsuCompanySettings,
     TagsSettings,
     UnitSettings,
 )
@@ -21,6 +22,7 @@ airline_settings = AirlineSettings()
 insurance_company_settings = InsuranceCompanySettings()
 metadata_settings = MetadataSettings()
 tags_settings = TagsSettings()
+psu_company_settings = PsuCompanySettings()
 
 
 def extract_pattern_from_columns(
@@ -126,10 +128,18 @@ async def find_insurance_company_columns(columns: set):
             insurance_company_settings.INSURANCE_COMPANY_NAME_KEYWORD
         )
     )
-    airline_name, _ = extract_pattern_from_columns(
+    insurance_company_name, _ = extract_pattern_from_columns(
         columns, insurance_name_pattern
     )
-    return {"insurance_name": airline_name}
+    return {"insurance_name": insurance_company_name}
+
+
+async def find_psu_company_columns(columns: set):
+    psu_name_pattern = re.compile(
+        r".*({})".format(psu_company_settings.PSU_COMPANY_NAME_KEYWORD)
+    )
+    psu_name, _ = extract_pattern_from_columns(columns, psu_name_pattern)
+    return {"psu_name": psu_name}
 
 
 async def find_unit_columns(columns: set):
@@ -146,14 +156,6 @@ async def find_note_columns(columns: set):
     return {
         "note": note_column,
     }
-
-
-# async def find_tags_columns(columns: set):
-#     tags_pattern = re.compile(r"({})".format(tags_settings.TAGS_KEYWORD))
-#     tags_column, _ = extract_pattern_from_columns(columns, tags_pattern)
-#     return {
-#         "tags": tags_column,
-#     }
 
 
 async def find_object_columns(dataset):
@@ -286,6 +288,7 @@ async def find_mapped_columns(columns):
     insurance_company_name_columns = await find_insurance_company_columns(
         columns
     )
+    psu_columns = await find_psu_company_columns(columns)
     metadata_columns = await find_metadata_columns(columns)
     mapped_columns = {
         **datetime_columns,
@@ -295,10 +298,12 @@ async def find_mapped_columns(columns):
         **airline_name_columns,
         **metadata_columns,
         **insurance_company_name_columns,
+        **psu_columns,
     }
     not_mapped_columns = list(
         set(columns).difference(
             list(chain.from_iterable(mapped_columns.values()))
         )
     )
+    print({**mapped_columns, "unmapped": not_mapped_columns})
     return {**mapped_columns, "unmapped": not_mapped_columns}

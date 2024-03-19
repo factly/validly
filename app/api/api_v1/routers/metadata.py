@@ -6,6 +6,7 @@ from fastapi.logger import logger
 
 from app.models.enums import ExpectationResultType
 from app.models.metadata_gsheet import MetadataGsheetRequest
+from app.utils.common import read_dataset
 from app.utils.gsheets import get_records_from_gsheets
 from app.utils.metadata import metadata_expectation_suite
 
@@ -20,16 +21,22 @@ async def execute_metadata_expectation_from_file(
         ExpectationResultType.SUMMARY,
         description="Level of Details for a Expectation result",
     ),
-    datasets: UploadFile = File(...),
+    file: UploadFile = File(...),
 ):
 
     # read the dataset from uploaded CSV file
-    logger.info(f"dataset: {datasets.filename}")
-    df = pd.read_csv(datasets.file)
+    logger.info(f"dataset: {file.filename}")
+    dataset = await read_dataset(file, is_file=True)
+    # df = pd.read_csv(datasets.file)
+
+    # # metadata expectation
+    # expectation = await metadata_expectation_suite(
+    #     df, result_type, dataset_name=datasets.filename
+    # )
 
     # metadata expectation
     expectation = await metadata_expectation_suite(
-        df, result_type, dataset_name=datasets.filename
+        dataset, result_type, dataset_name=file.filename
     )
 
     return expectation

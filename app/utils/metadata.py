@@ -62,12 +62,13 @@ async def sector_expectation_suite(dataset, result_format):
     expectation_suite = await modify_sector_expectation_suite(
         sector_column, result_format
     )
+
     # convert pandas dataset to great_expectations dataset
     ge_pandas_dataset = ge.from_pandas(
         dataset, expectation_suite=expectation_suite
     )
-    validation = ge_pandas_dataset.validate()
 
+    validation = ge_pandas_dataset.validate()
     validation_ui_name = (
         validation["results"][0]["expectation_config"]["meta"][
             "expectation_name"
@@ -123,11 +124,13 @@ async def organization_expectation_suite(dataset, result_format):
     expectation_suite = await modify_organization_expectation_suite(
         organization_column, result_format
     )
+
     # convert pandas dataset to great_expectations dataset
     ge_pandas_dataset = ge.from_pandas(
         dataset, expectation_suite=expectation_suite
     )
     validation = ge_pandas_dataset.validate()
+
     validation_ui_name = (
         validation["results"][0]["expectation_config"]["meta"][
             "expectation_name"
@@ -416,6 +419,48 @@ async def time_saved_in_hours_expectation_suite(dataset, result_format):
     return response
 
 
+async def description_expectation_suite(dataset, result_format):
+    """Expectation to check description in specific range
+
+    Expectation is on whether description lies in the range of 50 to 5000 characters
+    Flag if its outside the range.
+
+    Args:
+        dataset (Dataframe): Read metadata csv using Pandas Dataframe
+        result_format (str): SUMMARY
+
+    Returns:
+        Dict: Dictionary of Expectations
+    """
+    mapped_columns = await find_metadata_columns(set(dataset.columns))
+    description_column = mapped_columns["description"][0]
+    expectation_name = meta_data_setting.DESCRIPTION_KEYWORD.format(
+        column=description_column
+    )
+
+    ge_pandas_dataset = ge.from_pandas(dataset)
+
+    expectation = ge_pandas_dataset.expect_column_values_to_be_between(
+        column=description_column,
+        min_value=50,
+        max_value=5000,
+        catch_exceptions=True,
+        result_format=result_format,
+    )
+
+    expectation_dict = expectation.to_json_dict()
+    expectation_dict["expectation_config"]["meta"] = {
+        "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
+        "expectation_name": expectation_name,
+    }
+    response = {
+        expectation_dict["expectation_config"]["meta"][
+            "expectation_name"
+        ]: expectation_dict
+    }
+    return response
+
+
 async def metadata_expectation_suite(
     dataset, result_format, dataset_name: str
 ):
@@ -433,10 +478,20 @@ async def metadata_expectation_suite(
     if isinstance(dataset, str):
         dataset = await read_dataset(dataset)
 
+    # Dataset modification for sector expectation suite
+    dataset_sector = dataset.copy()
+    # explode the dataset based on sector column
+    dataset_sector["sectors"] = dataset_sector["sectors"].apply(
+        lambda x: x.split(",")
+    )
+    dataset_sector = dataset_sector.explode("sectors").reset_index(drop=True)
+    dataset_sector["sectors"] = dataset_sector["sectors"].str.strip()
+
     expectations = await asyncio.gather(
-        sector_expectation_suite(dataset, result_format),
+        sector_expectation_suite(dataset_sector, result_format),
         organization_expectation_suite(dataset, result_format),
         short_form_expectation_suite(dataset, result_format),
+        # description_expectation_suite(dataset, result_format),
         unit_expectation_suite(dataset, result_format),
         tags_expectation_suite(dataset, result_format),
         frequency_of_update_expectation_suite(dataset, result_format),

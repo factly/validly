@@ -16,9 +16,11 @@ class Settings(BaseSettings):
     MODE: str = "development"
     DOCS_URL: str = "/api/docs"
     EXAMPLE_FOLDER: str = "/Users/somitragupta/factly/news-room-datasets"
-    EXAMPLE_URL: str = "/Users/somitragupta/factly/factly-datasets/projects/rbi/\
+    EXAMPLE_URL: str = (
+        "/Users/somitragupta/factly/factly-datasets/projects/rbi/\
 data/processed/1_timeseries/5_handbook-of-statistics-on-the-indian-economy/\
 hbs-mb-scb-select-aggregates-weekly/output.csv"
+    )
     EXAMPLE_URL_COUNTRY: str = """https://storage.factly.org/mande/\
 edu-ministry/data/processed/statistics/1_AISHE_report/19_enrolment_foreign/output.csv"""
     EXAMPLE_URL_STATE: str = """https://storage.factly.org/mande/edu-ministry/data/\
@@ -298,7 +300,7 @@ class NoteSettings(BaseSettings):
             {
                 "expectation_type": "expect_column_values_to_match_regex_list",
                 "kwargs": {
-                    "column": "unit",
+                    "column": "note",
                     "regex_list": [",?.+?:[^,]+[,]?"],
                     "result_format": "SUMMARY",
                 },
@@ -314,7 +316,33 @@ class NoteSettings(BaseSettings):
 
 class CustomExpectationsSettings(BaseSettings):
 
+    NULL_DATETIME_VALUE_NAME: str = "Null date values Flag - {column}"
+    NULL_DATETIME_VALUE_MSG: str = (
+        "Null values should not be permitted for datetime values"
+    )
+
     NUMERIC_COLUMNS_TYPES = ["float64", "int64"]
+    NUMERIC_VALUES_PATTERN = re.compile(r"^-?\d+(\.\d{1,2})?$")
+    NUMERIC_EXPECTATION_NAME: str = (
+        "Numeric values in specific pattern - {column}"
+    )
+    NUMERIC_EXPECTATION_ERR_MSG: str = (
+        "Numeric values should be in proper format both integer and float(roundoff to two decimal places)"
+    )
+
+    NEGATIVE_NUMERIC_VALUES_PATTERN = re.compile(r"^-\d+(\.\d{1,})?$")
+    NEGATIVE_NUMERIC_EXPECTATION_NAME: str = (
+        "Negative Numeric values Flag - {column}"
+    )
+    NEGATIVE_NUMERIC_EXPECTATION_ERR_MSG: str = (
+        "Flag Numeric values that are negative"
+    )
+
+    COLUMN_NAMES_PATTERN = re.compile(r"^[a-z]+(?:_[a-z]+)*$")
+    COLUMN_NAMES_EXPECTATION_NAME: str = "Column names in specific pattern"
+    COLUMN_NAMES_EXPECTATION_ERR_MSG: str = (
+        "Column names should be in lower case and separated by underscore - {column}"
+    )
 
     TRAIL_OR_LEAD_WHITESPACE_PATTERN = re.compile(r"^\s+.*|.*\s+$")
     LEADING_TRAILING_WHITE_SPACE_EXPECTATION_NAME: str = (
@@ -334,7 +362,9 @@ class CustomExpectationsSettings(BaseSettings):
     SPECIAL_CHARACTER_EXPECTATION_NAME: str = (
         "No special characters in Columns"
     )
-    SPECIAL_CHARACTER_EXPECTATION_ERR_MSG: str = "There should be no special character in the category name and measured value, like Telangana** , and any additional information  should be captured in notes instead of using a special character"
+    SPECIAL_CHARACTER_EXPECTATION_ERR_MSG: str = (
+        "There should be no special character in the category name and measured value, like Telangana** , and any additional information  should be captured in notes instead of using a special character"
+    )
 
     BRACKET_PATTERN = re.compile(r".*([\[\(].+?[\)\]]).*")
     BRACKETS_EXPECTATION_NAME: str = "No unnecessary brackets in Categories"
@@ -358,7 +388,9 @@ class CustomExpectationsSettings(BaseSettings):
 
     MINIMUM_DATASET_OBSERVATION_THRESH: int = 10
     OBSERVATIONS_MORE_THAN_THRESH_NAME: str = "Minimum required observation"
-    OBSERVATIONS_MORE_THAN_THRESH_MSG: str = "Generally the datasets must be more a threshold number of observation ({thresh})"
+    OBSERVATIONS_MORE_THAN_THRESH_MSG: str = (
+        "Generally the datasets must be more a threshold number of observation ({thresh})"
+    )
 
 
 class MetadataSettings(BaseSettings):
@@ -503,6 +535,11 @@ class MetadataSettings(BaseSettings):
             }
         ],
     }
+
+    DESCRIPTION_NAME: str = "Description"
+    DESCRIPTION_ERROR_MSG: str = (
+        "Description should be in the range of 50 to 5000"
+    )
 
     TIME_SAVED_IN_HOURS_NAME: str = "Null values in columns - {column}"
     TIME_SAVED_IN_HOURS_MSG: str = (

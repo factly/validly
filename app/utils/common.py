@@ -25,7 +25,11 @@ def get_encoding(obj):
 
 
 async def read_dataset(
-    source: str, s3_client=None, bucket_name: Union[str, None] = None, **kwargs
+    source: str,
+    s3_client=None,
+    bucket_name: Union[str, None] = None,
+    is_file: bool = False,
+    **kwargs,
 ) -> ge.dataset.pandas_dataset.PandasDataset:
     if s3_client:
         # dataset should be downloaded from s3 storage
@@ -42,7 +46,19 @@ async def read_dataset(
         finally:
             response.close()
             response.release_conn()
-
+    elif is_file:
+        try:
+            file = source.file.read()
+            dataset = ge.read_csv(BytesIO(file))
+            logger.info(f"Dataset read from : {source.filename}")
+        except UnicodeDecodeError:
+            encoding = get_encoding(obj=file)
+            dataset = ge.read_csv(BytesIO(file), encoding=encoding)
+            logger.info(
+                f"Dataset read from : {source.filename} with non-utf8 encoding"
+            )
+        except Exception as e:
+            logger.info(f"Error reading Dataset from : {source.filename}: {e}")
     else:
         session = kwargs.pop("session")
         try:
@@ -94,6 +110,20 @@ async def modify_default_expectation_suite(
         modified_expectation.append(expectation)
     expectation_suite["expectations"] = modified_expectation
     return expectation_suite
+
+
+async def modify_values_to_be_in_between(
+    changed_config: dict, default_config: str
+):
+    for expectation in default_config["expectations"]:
+        if (
+            expectation["expectation_type"]
+            == "expect_column_values_to_be_between"
+        ):
+            expectation["kwargs"].update(
+                changed_config["expect_column_values_to_be_between"]
+            )
+    return default_config
 
 
 async def modify_values_to_be_in_set(

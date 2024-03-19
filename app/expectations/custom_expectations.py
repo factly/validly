@@ -1,6 +1,8 @@
+import logging
 from datetime import date
 
 import numpy as np
+import pandas as pd
 from great_expectations.dataset import MetaPandasDataset, PandasDataset
 
 from app.core.config import CustomExpectationsSettings
@@ -8,6 +10,7 @@ from app.core.config import CustomExpectationsSettings
 custom_expectation_settings = CustomExpectationsSettings()
 
 CURRENT_YEAR = str(date.today().year)
+logging.basicConfig(level=logging.INFO)
 
 
 class GenericCustomExpectations(PandasDataset):
@@ -78,3 +81,56 @@ class GenericCustomExpectations(PandasDataset):
             ),
             length,
         )
+
+    @MetaPandasDataset.multicolumn_map_expectation
+    def expect_numerical_values_to_be_in_specific_pattern(
+        self,
+        column_list,
+        pattern=custom_expectation_settings.NUMERIC_VALUES_PATTERN,
+        meta={
+            "expectation_name": "Numeric values in specific pattern",
+        },
+        include_meta=True,
+    ):
+        bool_list = column_list.applymap(
+            lambda x: True if pattern.match(str(x)) else False
+        )
+        return bool_list[bool_list.columns[0]]
+
+    @MetaPandasDataset.multicolumn_map_expectation
+    def flag_negative_numerical_values(
+        self,
+        column_list,
+        pattern=custom_expectation_settings.NEGATIVE_NUMERIC_VALUES_PATTERN,
+        meta={
+            "expectation_name": "Negative Numeric values Flag",
+        },
+        include_meta=True,
+    ):
+        bool_list = column_list.applymap(
+            lambda x: False if pattern.match(str(x)) else True
+        )
+        return bool_list[bool_list.columns[0]]
+
+    @MetaPandasDataset.multicolumn_map_expectation
+    def expect_column_names_to_be_in_specific_pattern(
+        self,
+        column_list,
+        pattern=custom_expectation_settings.COLUMN_NAMES_PATTERN,
+        meta={
+            "expectation_name": "Values in specific pattern",
+        },
+        include_meta=True,
+        find_columns=False,
+    ):
+        boolean_list = pd.Series(column_list.columns).apply(
+            lambda x: True if pattern.match(str(x)) else False
+        )
+        # improper_column_list = [
+        #     column
+        #     for column, boolean in zip(column_list.columns, boolean_list)
+        #     if not boolean
+        # ]
+        # logging.info(boolean_list.all())
+
+        return boolean_list.all()

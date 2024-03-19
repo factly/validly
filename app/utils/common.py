@@ -112,6 +112,20 @@ async def modify_default_expectation_suite(
     return expectation_suite
 
 
+async def modify_values_to_be_in_between(
+    changed_config: dict, default_config: str
+):
+    for expectation in default_config["expectations"]:
+        if (
+            expectation["expectation_type"]
+            == "expect_column_values_to_be_between"
+        ):
+            expectation["kwargs"].update(
+                changed_config["expect_column_values_to_be_between"]
+            )
+    return default_config
+
+
 async def modify_values_to_be_in_set(
     changed_config: dict, default_config: str
 ):

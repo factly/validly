@@ -85,7 +85,7 @@ Suppose , if there is no data-quality check after, data-cleaning then there woul
 So, ideally the dataset should look like : 
 
 |sector|organization|short_form|....|time_saved_in_hours|price|
-|-|-|-|....|-|-|
+|-|-|-|-|-|-|
 |Education|All India Survey on Higher Education|AISHE|....|4|1996|
 
 If there would be a tool where a user can upload its `metadata/csv` file and can figure out its potential problems then metadata sheet can be revisited and updated properly.

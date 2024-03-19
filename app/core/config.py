@@ -178,7 +178,7 @@ class GeographySettings(BaseSettings):
 
     COUNTRY_KEYWORD = "country"
     STATE_KEYWORD = "state"
-    CITY_KEYWORD = "city"
+    DISTRICT_KEYWORD = "district"
     COUNTRY_EXPECTATION = {
         "data_asset_type": None,
         "expectation_suite_name": "country_expectation_suite",
@@ -200,7 +200,7 @@ class GeographySettings(BaseSettings):
     }
     STATE_EXPECTATION = {
         "data_asset_type": None,
-        "expectation_suite_name": "date_expectation_suite",
+        "expectation_suite_name": "state_expectation_suite",
         "expectations": [
             {
                 "expectation_type": "expect_column_values_to_be_in_set",
@@ -217,21 +217,21 @@ class GeographySettings(BaseSettings):
             }
         ],
     }
-    CITY_EXPECTATION = {
+    DISTRICT_EXPECTATION = {
         "data_asset_type": None,
-        "expectation_suite_name": "city_expectation_suite",
+        "expectation_suite_name": "district_expectation_suite",
         "expectations": [
             {
                 "expectation_type": "expect_column_values_to_be_in_set",
                 "kwargs": {
-                    "column": "city",
+                    "column": "district",
                     "value_set": [],
                     "result_format": "SUMMARY",
                 },
                 "meta": {
-                    "expectation_name": "City Name",
+                    "expectation_name": "District Name",
                     "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
-                    "expectation_error_message": "City Name should be from the Data Dictionary",
+                    "expectation_error_message": "District Name should be from the Data Dictionary",
                 },
             }
         ],
@@ -586,6 +586,54 @@ class TagsSettings(BaseSettings):
                     "expectation_name": "Tags in proper format",
                     "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
                     "expectation_error_message": "Tags should be in proper format as 'valueone, value-two'",
+                },
+            }
+        ],
+    }
+
+
+class InsuranceCompanySettings(BaseSettings):
+
+    INSURANCE_COMPANY_NAME_KEYWORD: str = "insurance_company"
+    INSURANCE_COMPANY_NAME_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "insurance_company_name_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "insurance_company",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Insurance Company Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Insurance Company Name should be from the Data Dictionary",
+                },
+            }
+        ],
+    }
+
+
+class PsuCompanySettings(BaseSettings):
+
+    PSU_COMPANY_NAME_KEYWORD: str = "psu_companies"
+    PSU_COMPANY_NAME_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "psu_company_name_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_values_to_be_in_set",
+                "kwargs": {
+                    "column": "psu_companies",
+                    "value_set": [],
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "PSU Company Name",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "PSU Company Name should be from the Data Dictionary",
                 },
             }
         ],

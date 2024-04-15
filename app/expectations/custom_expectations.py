@@ -123,14 +123,11 @@ class GenericCustomExpectations(PandasDataset):
         include_meta=True,
         find_columns=False,
     ):
-        boolean_list = pd.Series(column_list.columns).apply(
-            lambda x: True if pattern.match(str(x)) else False
+        boolean_list = (
+            pd.Series(column_list.columns)
+            .apply(lambda x: True if pattern.match(str(x)) else False)
+            .all()
         )
-        # improper_column_list = [
-        #     column
-        #     for column, boolean in zip(column_list.columns, boolean_list)
-        #     if not boolean
-        # ]
-        # logging.info(boolean_list.all())
+        boolean_list = pd.Series([boolean_list] * len(column_list))
 
-        return boolean_list.all()
+        return boolean_list

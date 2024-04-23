@@ -117,7 +117,10 @@ async def modify_column_order_expectation_suite(
 ):
     modified_expectations = []
     for expectation in expectation_suite["expectations"]:
-        if expectation["expectation_type"] == "expect_table_columns_to_match_ordered_list":
+        if (
+            expectation["expectation_type"]
+            == "expect_table_columns_to_match_ordered_list"
+        ):
             expectation["kwargs"]["column_list"] = column_order
         modified_expectations.append(expectation)
     expectation_suite["expectations"] = modified_expectations

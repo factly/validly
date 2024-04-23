@@ -6,13 +6,12 @@ from fastapi.encoders import jsonable_encoder
 
 from app.core.config import APP_DIR, MetadataSettings, Settings
 from app.utils.column_mapping import find_metadata_columns
-from app.utils.common import (
+from app.utils.common import (  # modify_column_order_expectation_suite,
+    modify_values_length_to_be_between,
     modify_values_to_be_in_set,
     modify_values_to_match_regex_list,
-    # modify_column_order_expectation_suite,
     read_dataset,
     read_pandas_dataset,
-    modify_values_length_to_be_between,
 )
 from app.utils.general import general_metadata_expectation_suite
 from app.utils.tags import tags_expectation_suite
@@ -26,7 +25,9 @@ async def check_column_order(dataset):
     results = {}
     settings.METADATA_COLUMN_ORDER_STRING.split(",")
     column_order_list = settings.METADATA_COLUMN_ORDER_STRING.split(",")
-    validation = dataset.expect_table_columns_to_match_ordered_list(column_order_list)
+    validation = dataset.expect_table_columns_to_match_ordered_list(
+        column_order_list
+    )
     results["Expect Table Columns To Match The Given List"] = validation
     return jsonable_encoder(results)
 
@@ -34,7 +35,9 @@ async def check_column_order(dataset):
 async def modify_dataset_name_for_factly_expectation_suite(
     column_name: str, result_format: str
 ):
-    default_expectation_suite = meta_data_setting.DATASET_NAME_FOR_FACTLY_EXPECTATION
+    default_expectation_suite = (
+        meta_data_setting.DATASET_NAME_FOR_FACTLY_EXPECTATION
+    )
     changed_config = {
         "expect_column_value_lengths_to_be_between": {
             "min_value": 5,

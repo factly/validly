@@ -112,6 +112,18 @@ async def modify_default_expectation_suite(
     return expectation_suite
 
 
+async def modify_column_order_expectation_suite(
+    expectation_suite: dict, column_order: list
+):
+    modified_expectations = []
+    for expectation in expectation_suite["expectations"]:
+        if expectation["expectation_type"] == "expect_table_columns_to_match_ordered_list":
+            expectation["kwargs"]["column_list"] = column_order
+        modified_expectations.append(expectation)
+    expectation_suite["expectations"] = modified_expectations
+    return expectation_suite
+
+
 async def modify_values_to_be_in_between(
     changed_config: dict, default_config: str
 ):
@@ -122,6 +134,20 @@ async def modify_values_to_be_in_between(
         ):
             expectation["kwargs"].update(
                 changed_config["expect_column_values_to_be_between"]
+            )
+    return default_config
+
+
+async def modify_values_length_to_be_between(
+    changed_config: dict, default_config: str
+):
+    for expectation in default_config["expectations"]:
+        if (
+            expectation["expectation_type"]
+            == "expect_column_value_lengths_to_be_between"
+        ):
+            expectation["kwargs"].update(
+                changed_config["expect_column_value_lengths_to_be_between"]
             )
     return default_config
 

@@ -170,9 +170,9 @@ async def find_metadata_columns(columns: set):
     organization_pattern = re.compile(
         r".*({}).*".format(metadata_settings.ORGANIZATION_KEYWORD)
     )
-    short_form_pattern = re.compile(
-        r".*({}).*".format(metadata_settings.SHORT_FORM_KEYWORD)
-    )
+    # short_form_pattern = re.compile(
+    #     r".*({}).*".format(metadata_settings.SHORT_FORM_KEYWORD)
+    # )
     description_pattern = re.compile(
         r".*({}).*".format(metadata_settings.DESCRIPTION_KEYWORD)
     )
@@ -217,9 +217,9 @@ async def find_metadata_columns(columns: set):
     organization_column, columns = extract_pattern_from_columns(
         columns, organization_pattern
     )
-    short_form_column, columns = extract_pattern_from_columns(
-        columns, short_form_pattern
-    )
+    # short_form_column, columns = extract_pattern_from_columns(
+    #     columns, short_form_pattern
+    # )
     description_column, columns = extract_pattern_from_columns(
         columns, description_pattern
     )
@@ -261,7 +261,7 @@ async def find_metadata_columns(columns: set):
     return {
         "sector": list(sector_column),
         "organization": list(organization_column),
-        "short_form": list(short_form_column),
+        # "short_form": list(short_form_column),
         "description": list(description_column),
         "tags": list(tags_column),
         "temporal_coverage": list(temporal_coverage_column),

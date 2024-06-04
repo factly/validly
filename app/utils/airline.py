@@ -1,9 +1,9 @@
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
-
-from app.core.config import APP_DIR, AirlineSettings, Settings
+from app.api.api_v1.routers.dictionary import standard_data_values
+from app.core.config import AirlineSettings, Settings
 from app.utils.column_mapping import find_airline_name_columns
-from app.utils.common import modify_values_to_be_in_set, read_pandas_dataset
+from app.utils.common import modify_values_to_be_in_set
 
 settings = Settings()
 airline_settings = AirlineSettings()
@@ -14,10 +14,8 @@ async def modify_airline_name_expectation_suite(
 ):
     default_expectation_suite = airline_settings.AIRLINE_NAME_EXPECTATION
 
-    airline_names_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "airline_names.csv"
-    )
-    airline_names_list = airline_names_dataset["airline_names"].tolist()
+    airline_names_dataset = standard_data_values[["airline"]].dropna()
+    airline_names_list = airline_names_dataset["airline"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {

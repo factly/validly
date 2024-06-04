@@ -18,16 +18,20 @@ g_sheet_session = requests.Session()
 g_sheet_response = g_sheet_session.get("https://docs.google.com/spreadsheets/d/1NEsFJGr5IHsrIakGgeNFUvz5zpLOadh_vDH7Apqmv9E/gviz/tq?tqx=out:csv&sheet=master_dictionaries")
 g_sheet_bytes_data = g_sheet_response.content
 data = pd.read_csv(io.StringIO(g_sheet_bytes_data.decode('utf-8')))
-print("reading data from google sheet@@@@")
-# data.rename(
-#     columns={
-#         "country_standard_name": "country",
-#         "unique_standard_airline_name": "airline",
-#         "standard_disease_name": "disease",
-#         "psu_companies": "psu",
-#     }
-# )
-# print(data.columns.tolist())
+
+standard_data_values = data.copy()
+standard_data_values.rename(
+    columns={
+        "country_standard_name": "country",
+        "unique_standard_airline_name": "airline",
+        "standard_disease_name": "diseases",
+        "psu_companies": "psu",
+        "standard_district_name": "district",
+        "standard_states": "state",
+        "insurance_standard_names": "insurance_companies"
+    },
+    inplace=True,
+)
 
 
 @router.get("/", summary="Get all Saved Entities csv file name")
@@ -50,6 +54,7 @@ async def get_entity_data(entity: str):
     json_compatible_item_data = jsonable_encoder(
         entity_df.to_dict(orient="records")
     )
+    print(json_compatible_item_data)
     return JSONResponse(content=json_compatible_item_data)
 
 

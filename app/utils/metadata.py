@@ -4,20 +4,22 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
-from app.core.config import APP_DIR, MetadataSettings, Settings
+from app.core.config import MetadataSettings, Settings
 from app.utils.column_mapping import find_metadata_columns
 from app.utils.common import (
     modify_values_to_be_in_set,
     modify_values_to_match_regex_list,
     read_dataset,
-    read_pandas_dataset,
 )
+from app.api.api_v1.routers.dictionary import standard_data_values
 from app.utils.general import general_metadata_expectation_suite
 from app.utils.tags import tags_expectation_suite
 from app.utils.unit import unit_expectation_suite
 
 settings = Settings()
 meta_data_setting = MetadataSettings()
+# todo: in future if we need short_form values from dictionary uncomment the following
+# short_form_dataset = standard_data_values[["short_form"]].dropna()
 
 
 async def modify_sector_expectation_suite(
@@ -26,7 +28,7 @@ async def modify_sector_expectation_suite(
 
     default_expectation_suite = meta_data_setting.SECTOR_EXPECTATION
 
-    sector_dataset = await read_pandas_dataset(APP_DIR / "core" / "sector.csv")
+    sector_dataset = standard_data_values[["sector"]].dropna()
     sector_list = sector_dataset["sector"].tolist()
 
     changed_config = {
@@ -86,9 +88,7 @@ async def modify_organization_expectation_suite(
 ):
     default_expectation_suite = meta_data_setting.ORGANIZATION_EXPECTATION
 
-    organization_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "organization.csv"
-    )
+    organization_dataset = standard_data_values[["organization"]].dropna()
     organization_list = organization_dataset["organization"].tolist()
 
     changed_config = {
@@ -148,10 +148,9 @@ async def modify_short_form_expectation_suite(
 ):
     default_expectation_suite = meta_data_setting.SHORT_FORM_EXPECTATION
 
-    short_form_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "short_form.csv"
-    )
-    short_form_list = short_form_dataset["short_form"].tolist()
+    # NOTE: Modify the short_form_expectation_suite to use short_form
+    short_form_dataset = {"short_form": ""}
+    short_form_list = short_form_dataset["short_form"]
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -210,9 +209,7 @@ async def modify_frequency_of_update_expectation_suite(
         meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
     )
 
-    frequency_of_update_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "frequency_of_update.csv"
-    )
+    frequency_of_update_dataset = standard_data_values[["frequency_of_update"]].dropna()
     frequency_of_update_list = frequency_of_update_dataset[
         "frequency_of_update"
     ].tolist()

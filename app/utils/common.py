@@ -2,13 +2,13 @@ import logging
 import re
 from io import BytesIO
 from typing import Union
-
+# from app.api.api_v1.routers.dictionary import data as dictionary_data
 import great_expectations as ge
 import pandas as pd
 from charset_normalizer import from_bytes
 from fastapi.logger import logger
 
-from app.core.config import APP_DIR, GeographySettings
+from app.core.config import GeographySettings
 
 logging.basicConfig(level=logging.INFO)
 geographic_settings = GeographySettings()
@@ -79,12 +79,12 @@ async def read_pandas_dataset(source: str, **kwargs):
     return dataset
 
 
-async def load_values_to_be_in_set(domain: str):
-    # this function is used to load csv files, consisting values
-    # for states or country that are required to be in specific set
-    set_values_file = APP_DIR / "core" / f"{domain}.csv"
-    set_values = pd.read_csv(set_values_file)[f"{domain}"].unique()
-    return set_values
+# async def load_values_to_be_in_set(domain: str):
+#     # this function is used to load csv files, consisting values
+#     # for states or country that are required to be in specific set
+#     set_values_file = APP_DIR / "core" / f"{domain}.csv"
+#     set_values = pd.read_csv(set_values_file)[f"{domain}"].unique()
+#     return set_values
 
 
 async def modify_column_names_to_expectation_suite(

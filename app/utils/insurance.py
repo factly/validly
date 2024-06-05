@@ -1,5 +1,6 @@
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
+
 from app.api.api_v1.routers.dictionary import standard_data_values
 from app.core.config import InsuranceCompanySettings, Settings
 from app.utils.column_mapping import find_insurance_company_columns
@@ -16,7 +17,9 @@ async def modify_insurance_company_name_expectation_suite(
         insurance_company_settings.INSURANCE_COMPANY_NAME_EXPECTATION
     )
 
-    insurance_company_names_dataset = standard_data_values[["insurance_companies"]]
+    insurance_company_names_dataset = standard_data_values[
+        ["insurance_companies"]
+    ]
     insurance_company_names_list = insurance_company_names_dataset[
         "insurance_companies"
     ].tolist()

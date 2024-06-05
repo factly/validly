@@ -4,6 +4,7 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
+from app.api.api_v1.routers.dictionary import standard_data_values
 from app.core.config import MetadataSettings, Settings
 from app.utils.column_mapping import find_metadata_columns
 from app.utils.common import (
@@ -11,7 +12,6 @@ from app.utils.common import (
     modify_values_to_match_regex_list,
     read_dataset,
 )
-from app.api.api_v1.routers.dictionary import standard_data_values
 from app.utils.general import general_metadata_expectation_suite
 from app.utils.tags import tags_expectation_suite
 from app.utils.unit import unit_expectation_suite
@@ -209,7 +209,9 @@ async def modify_frequency_of_update_expectation_suite(
         meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
     )
 
-    frequency_of_update_dataset = standard_data_values[["frequency_of_update"]].dropna()
+    frequency_of_update_dataset = standard_data_values[
+        ["frequency_of_update"]
+    ].dropna()
     frequency_of_update_list = frequency_of_update_dataset[
         "frequency_of_update"
     ].tolist()

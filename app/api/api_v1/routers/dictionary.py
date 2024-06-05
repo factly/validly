@@ -1,8 +1,9 @@
+import io
+
 import pandas as pd
+import requests
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-import io
-import requests
 from fastapi.responses import JSONResponse
 
 from app.core.config import CORE_FOLDER, Settings
@@ -15,9 +16,13 @@ dictionary_router = router = APIRouter()
 
 
 g_sheet_session = requests.Session()
-g_sheet_response = g_sheet_session.get("https://docs.google.com/spreadsheets/d/1NEsFJGr5IHsrIakGgeNFUvz5zpLOadh_vDH7Apqmv9E/gviz/tq?tqx=out:csv&sheet=master_dictionaries")
+common_g_sheet_link_format = "https://docs.google.com/spreadsheets/d/"
+g_sheet_id = "1NEsFJGr5IHsrIakGgeNFUvz5zpLOadh_vDH7Apqmv9E"
+download_sheet_name = "/gviz/tq?tqx=out:csv&sheet=master_dictionaries"
+url_name = common_g_sheet_link_format + g_sheet_id + download_sheet_name
+g_sheet_response = g_sheet_session.get(url_name)
 g_sheet_bytes_data = g_sheet_response.content
-data = pd.read_csv(io.StringIO(g_sheet_bytes_data.decode('utf-8')))
+data = pd.read_csv(io.StringIO(g_sheet_bytes_data.decode("utf-8")))
 
 standard_data_values = data.copy()
 standard_data_values.rename(
@@ -28,7 +33,7 @@ standard_data_values.rename(
         "psu_companies": "psu",
         "standard_district_name": "district",
         "standard_states": "state",
-        "insurance_standard_names": "insurance_companies"
+        "insurance_standard_names": "insurance_companies",
     },
     inplace=True,
 )

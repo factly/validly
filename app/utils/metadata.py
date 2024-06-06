@@ -7,7 +7,8 @@ from fastapi.encoders import jsonable_encoder
 from app.api.api_v1.routers.dictionary import standard_data_values
 from app.core.config import MetadataSettings, Settings
 from app.utils.column_mapping import find_metadata_columns
-from app.utils.common import (
+from app.utils.common import (  # modify_column_order_expectation_suite,
+    modify_values_length_to_be_between,
     modify_values_to_be_in_set,
     modify_values_to_match_regex_list,
     read_dataset,
@@ -18,18 +19,151 @@ from app.utils.unit import unit_expectation_suite
 
 settings = Settings()
 meta_data_setting = MetadataSettings()
-# todo: in future if we need short_form values from dictionary uncomment the following
-# short_form_dataset = standard_data_values[["short_form"]].dropna()
+
+
+async def check_column_order(dataset):
+    results = {}
+    settings.METADATA_COLUMN_ORDER_STRING.split(",")
+    column_order_list = settings.METADATA_COLUMN_ORDER_STRING.split(",")
+    validation = dataset.expect_table_columns_to_match_ordered_list(
+        column_order_list
+    )
+    results["Expect Table Columns To Match The Given List"] = validation
+    return jsonable_encoder(results)
+
+
+async def modify_dataset_name_for_factly_expectation_suite(
+    column_name: str, result_format: str
+):
+    default_expectation_suite = (
+        meta_data_setting.DATASET_NAME_FOR_FACTLY_EXPECTATION
+    )
+    changed_config = {
+        "expect_column_value_lengths_to_be_between": {
+            "min_value": 5,
+            "max_value": 200,
+            "column": column_name,
+            "result_format": result_format,
+        }
+    }
+    changed_expectation_suite = await modify_values_length_to_be_between(
+        changed_config, default_expectation_suite
+    )
+    return changed_expectation_suite
+
+
+async def dataset_name_for_factly_expectation_suite(dataset, result_format):
+    """Expectation to check description in specific range
+
+    Expectation is on whether description lies in the range of 50 to 5000 characters
+    Flag if its outside the range.
+
+    Args:
+        dataset (Data-frame): Read metadata csv using Pandas Data-frame
+        result_format (str): SUMMARY
+
+    Returns:
+        Dict: Dictionary of Expectations
+    """
+    results = {}
+    mapped_columns = await find_metadata_columns(set(dataset.columns))
+    sector_column = mapped_columns["dataset_name_for_factly"][0]
+
+    expectation_suite = await modify_dataset_name_for_factly_expectation_suite(
+        sector_column, result_format
+    )
+    # convert pandas dataset to great_expectations dataset
+    ge_pandas_dataset = ge.from_pandas(
+        dataset, expectation_suite=expectation_suite
+    )
+    validation = ge_pandas_dataset.validate()
+    validation_ui_name = (
+        validation["results"][0]["expectation_config"]["meta"][
+            "expectation_name"
+        ]
+        + " - "
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
+    )
+    results[validation_ui_name] = validation
+
+    return jsonable_encoder(results)
+
+
+async def modify_description_expectation_suite(
+    column_name: str, result_format: str
+):
+    default_expectation_suite = meta_data_setting.DESCRIPTION_EXPECTATION
+    changed_config = {
+        "expect_column_value_lengths_to_be_between": {
+            "min_value": 50,
+            "max_value": 5000,
+            "column": column_name,
+            "result_format": result_format,
+        }
+    }
+    changed_expectation_suite = await modify_values_length_to_be_between(
+        changed_config, default_expectation_suite
+    )
+    return changed_expectation_suite
+
+
+async def description_expectation_suite(dataset, result_format):
+    """Expectation to check description in specific range
+
+    Expectation is on whether description lies in the range of 50 to 5000 characters
+    Flag if its outside the range.
+
+    Args:
+        dataset (Data-frame): Read metadata csv using Pandas Data-frame
+        result_format (str): SUMMARY
+
+    Returns:
+        Dict: Dictionary of Expectations
+    """
+    results = {}
+    mapped_columns = await find_metadata_columns(set(dataset.columns))
+    sector_column = mapped_columns["description"][0]
+
+    expectation_suite = await modify_description_expectation_suite(
+        sector_column, result_format
+    )
+    # convert pandas dataset to great_expectations dataset
+    ge_pandas_dataset = ge.from_pandas(
+        dataset, expectation_suite=expectation_suite
+    )
+
+    validation = ge_pandas_dataset.validate()
+    validation_ui_name = (
+        validation["results"][0]["expectation_config"]["meta"][
+            "expectation_name"
+        ]
+        + " - "
+        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
+    )
+    results[validation_ui_name] = validation
+
+    return jsonable_encoder(results)
 
 
 async def modify_sector_expectation_suite(
     column_name: str, result_format: str
 ):
+    """
+    Summary: Modify the default sector expectation suite using
+        sector.csv file in app.core
+
+    Args:
+        column_name (str): _description_
+        result_format (str): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     default_expectation_suite = meta_data_setting.SECTOR_EXPECTATION
 
-    sector_dataset = standard_data_values[["sector"]].dropna()
-    sector_list = sector_dataset["sector"].tolist()
+    sector_dataset = standard_data_values[["sectors"]].dropna().copy()
+    sector_list = sector_dataset["sectors"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -88,8 +222,10 @@ async def modify_organization_expectation_suite(
 ):
     default_expectation_suite = meta_data_setting.ORGANIZATION_EXPECTATION
 
-    organization_dataset = standard_data_values[["organization"]].dropna()
-    organization_list = organization_dataset["organization"].tolist()
+    organization_dataset = (
+        standard_data_values[["organisation"]].dropna().copy()
+    )
+    organization_list = organization_dataset["organisation"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -139,7 +275,7 @@ async def organization_expectation_suite(dataset, result_format):
         + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
-
+    # print(jsonable_encoder(results))
     return jsonable_encoder(results)
 
 
@@ -165,41 +301,41 @@ async def modify_short_form_expectation_suite(
     return changed_expectation_suite
 
 
-async def short_form_expectation_suite(dataset, result_format):
-    """Expectation to check if Short Form values are in short_form.csv
+# async def short_form_expectation_suite(dataset, result_format):
+#     """Expectation to check if Short Form values are in short_form.csv
 
-    Expectation is on whether every value present in short form column of metadata
-    csv is in short_form.csv file or not
+#     Expectation is on whether every value present in short form column of metadata
+#     csv is in short_form.csv file or not
 
-    Args:
-        dataset (Dataframe): Read metadata csv using Pandas Dataframe
-        result_format (str): SUMMARY
+#     Args:
+#         dataset (Dataframe): Read metadata csv using Pandas Dataframe
+#         result_format (str): SUMMARY
 
-    Returns:
-        Dict: Dictionary of Expectations
-    """
-    results = {}
-    mapped_columns = await find_metadata_columns(set(dataset.columns))
-    short_form_column = mapped_columns["short_form"][0]
+#     Returns:
+#         Dict: Dictionary of Expectations
+#     """
+#     results = {}
+#     mapped_columns = await find_metadata_columns(set(dataset.columns))
+#     short_form_column = mapped_columns["short_form"][0]
 
-    expectation_suite = await modify_short_form_expectation_suite(
-        short_form_column, result_format
-    )
-    # convert pandas dataset to great_expectations dataset
-    ge_pandas_dataset = ge.from_pandas(
-        dataset, expectation_suite=expectation_suite
-    )
-    validation = ge_pandas_dataset.validate()
-    validation_ui_name = (
-        validation["results"][0]["expectation_config"]["meta"][
-            "expectation_name"
-        ]
-        + " - "
-        + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
-    )
-    results[validation_ui_name] = validation
+#     expectation_suite = await modify_short_form_expectation_suite(
+#         short_form_column, result_format
+#     )
+#     # convert pandas dataset to great_expectations dataset
+#     ge_pandas_dataset = ge.from_pandas(
+#         dataset, expectation_suite=expectation_suite
+#     )
+#     validation = ge_pandas_dataset.validate()
+#     validation_ui_name = (
+#         validation["results"][0]["expectation_config"]["meta"][
+#             "expectation_name"
+#         ]
+#         + " - "
+#         + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
+#     )
+#     results[validation_ui_name] = validation
 
-    return jsonable_encoder(results)
+#     return jsonable_encoder(results)
 
 
 async def modify_frequency_of_update_expectation_suite(
@@ -209,9 +345,9 @@ async def modify_frequency_of_update_expectation_suite(
         meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
     )
 
-    frequency_of_update_dataset = standard_data_values[
-        ["frequency_of_update"]
-    ].dropna()
+    frequency_of_update_dataset = (
+        standard_data_values[["frequency_of_update"]].dropna().copy()
+    )
     frequency_of_update_list = frequency_of_update_dataset[
         "frequency_of_update"
     ].tolist()
@@ -418,48 +554,6 @@ async def time_saved_in_hours_expectation_suite(dataset, result_format):
     return response
 
 
-async def description_expectation_suite(dataset, result_format):
-    """Expectation to check description in specific range
-
-    Expectation is on whether description lies in the range of 50 to 5000 characters
-    Flag if its outside the range.
-
-    Args:
-        dataset (Dataframe): Read metadata csv using Pandas Dataframe
-        result_format (str): SUMMARY
-
-    Returns:
-        Dict: Dictionary of Expectations
-    """
-    mapped_columns = await find_metadata_columns(set(dataset.columns))
-    description_column = mapped_columns["description"][0]
-    expectation_name = meta_data_setting.DESCRIPTION_KEYWORD.format(
-        column=description_column
-    )
-
-    ge_pandas_dataset = ge.from_pandas(dataset)
-
-    expectation = ge_pandas_dataset.expect_column_values_to_be_between(
-        column=description_column,
-        min_value=50,
-        max_value=5000,
-        catch_exceptions=True,
-        result_format=result_format,
-    )
-
-    expectation_dict = expectation.to_json_dict()
-    expectation_dict["expectation_config"]["meta"] = {
-        "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
-        "expectation_name": expectation_name,
-    }
-    response = {
-        expectation_dict["expectation_config"]["meta"][
-            "expectation_name"
-        ]: expectation_dict
-    }
-    return response
-
-
 async def metadata_expectation_suite(
     dataset, result_format, dataset_name: str
 ):
@@ -476,7 +570,7 @@ async def metadata_expectation_suite(
     """
     if isinstance(dataset, str):
         dataset = await read_dataset(dataset)
-
+    # print(dir(dataset))
     # Dataset modification for sector expectation suite
     dataset_sector = dataset.copy()
     # explode the dataset based on sector column
@@ -487,10 +581,12 @@ async def metadata_expectation_suite(
     dataset_sector["sectors"] = dataset_sector["sectors"].str.strip()
 
     expectations = await asyncio.gather(
+        check_column_order(dataset),
         sector_expectation_suite(dataset_sector, result_format),
         organization_expectation_suite(dataset, result_format),
-        short_form_expectation_suite(dataset, result_format),
-        # description_expectation_suite(dataset, result_format),
+        # short_form_expectation_suite(dataset, result_format),
+        description_expectation_suite(dataset, result_format),
+        dataset_name_for_factly_expectation_suite(dataset, result_format),
         unit_expectation_suite(dataset, result_format),
         tags_expectation_suite(dataset, result_format),
         frequency_of_update_expectation_suite(dataset, result_format),

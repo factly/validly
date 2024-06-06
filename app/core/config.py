@@ -60,6 +60,9 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     SERVICE_ACCOUNT_CONF: Dict[str, str] = {"<CHANGE_ME>": "<CHANGE_ME>"}
     GSHEET_SCOPES: List[str] = ["https://www.googleapis.com/auth/spreadsheets"]
 
+    # Metadata File Parameters
+    METADATA_COLUMN_ORDER_STRING = ""
+
     class Config:
         env_file = ".env"
 
@@ -397,7 +400,7 @@ class MetadataSettings(BaseSettings):
 
     SECTOR_KEYWORD = "sector"
     ORGANIZATION_KEYWORD = "organization"
-    SHORT_FORM_KEYWORD = "short_form"
+    # SHORT_FORM_KEYWORD = "short_form"
 
     DESCRIPTION_KEYWORD = "description"
     DATASET_NAME_FOR_FACTLY_KEYWORD = "dataset_name_for_factly"
@@ -412,6 +415,47 @@ class MetadataSettings(BaseSettings):
     VARIABLE_MEASURED_KEYWORD = "variable_measured"
     DATA_NEXT_UPDATE_KEYWORD = "data_next_update"
     SOURCE_KEYWORD = "source"
+    DATASET_NAME_FOR_FACTLY_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "dataset_name_for_factly_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_value_lengths_to_be_between",
+                "kwargs": {
+                    "column": "dataset_name_for_factly",
+                    "min_value": 5,
+                    "max_value": 200,
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Dataset Name For Factly Length",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Dataset Name For Factly Length should be less than 200",
+                },
+            }
+        ],
+    }
+
+    DESCRIPTION_EXPECTATION = {
+        "data_asset_type": None,
+        "expectation_suite_name": "description_expectation_suite",
+        "expectations": [
+            {
+                "expectation_type": "expect_column_value_lengths_to_be_between",
+                "kwargs": {
+                    "column": "description",
+                    "min_value": 50,
+                    "max_value": 5000,
+                    "result_format": "SUMMARY",
+                },
+                "meta": {
+                    "expectation_name": "Description Length",
+                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+                    "expectation_error_message": "Description should be grater than 50",
+                },
+            }
+        ],
+    }
     SECTOR_EXPECTATION = {
         "data_asset_type": None,
         "expectation_suite_name": "sector_expectation_suite",
@@ -452,25 +496,25 @@ class MetadataSettings(BaseSettings):
         ],
     }
 
-    SHORT_FORM_EXPECTATION = {
-        "data_asset_type": None,
-        "expectation_suite_name": "short_form_expectation_suite",
-        "expectations": [
-            {
-                "expectation_type": "expect_column_values_to_be_in_set",
-                "kwargs": {
-                    "column": "short_form",
-                    "value_set": [],
-                    "result_format": "SUMMARY",
-                },
-                "meta": {
-                    "expectation_name": "Short Form in set of values",
-                    "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
-                    "expectation_error_message": "Short Form should be from the Data Dictionary",
-                },
-            }
-        ],
-    }
+    # SHORT_FORM_EXPECTATION = {
+    #     "data_asset_type": None,
+    #     "expectation_suite_name": "short_form_expectation_suite",
+    #     "expectations": [
+    #         {
+    #             "expectation_type": "expect_column_values_to_be_in_set",
+    #             "kwargs": {
+    #                 "column": "short_form",
+    #                 "value_set": [],
+    #                 "result_format": "SUMMARY",
+    #             },
+    #             "meta": {
+    #                 "expectation_name": "Short Form in set of values",
+    #                 "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
+    #                 "expectation_error_message": "Short Form should be from the Data Dictionary",
+    #             },
+    #         }
+    #     ],
+    # }
 
     FREQUENCY_OF_UPDATE_EXPECTATION = {
         "data_asset_type": None,

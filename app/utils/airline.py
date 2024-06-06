@@ -15,7 +15,7 @@ async def modify_airline_name_expectation_suite(
 ):
     default_expectation_suite = airline_settings.AIRLINE_NAME_EXPECTATION
 
-    airline_names_dataset = standard_data_values[["airline"]].dropna()
+    airline_names_dataset = standard_data_values[["airline"]].dropna().copy()
     airline_names_list = airline_names_dataset["airline"].tolist()
 
     changed_config = {

@@ -28,7 +28,6 @@ templates = Jinja2Templates(directory="templates")
 @app.get(settings.API_V1_STR)
 async def home(request: Request):
     return templates.TemplateResponse("base.html", {"request": request})
-    # return {"message": "Server is up"}
 
 
 app.include_router(dataset_router, prefix="", tags=["Compare Datasets"])

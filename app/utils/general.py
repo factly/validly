@@ -157,9 +157,6 @@ async def null_not_in_columns(dataset, result_format, column, column_type):
         catch_exceptions=True,
         result_format=result_format,
     )
-    # expectation = ge_pandas_dataset.expect_column_values_to_not_be_null(
-    #     column=column, result_format=result_format, catch_exceptions=True
-    # )
 
     expectation_dict = expectation.to_json_dict()
     expectation_dict["expectation_config"]["meta"] = {
@@ -384,7 +381,6 @@ async def general_table_expectation_suite(dataset, result_format):
         multispaces_between_text_expectation_suite(dataset, result_format),
         bracket_values_expectation_suite(dataset, result_format),
         special_character_expectation_suite(dataset, result_format),
-        # null_not_in_columns(dataset, result_format, "price"),
         *[
             null_not_in_columns(dataset, result_format, col, "numeric")
             for col in numeric_columns

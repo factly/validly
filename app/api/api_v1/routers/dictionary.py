@@ -14,11 +14,16 @@ settings = Settings()
 
 dictionary_router = router = APIRouter()
 
+# reading sheet name from env
+google_spread_sheet_sheet_name = settings.GOOGLE_SPREAD_SHEET_SHEET_NAME
+google_sheet_id = settings.GOOGLE_SHEET_ID
 
 g_sheet_session = requests.Session()
 common_g_sheet_link_format = "https://docs.google.com/spreadsheets/d/"
-g_sheet_id = "1NEsFJGr5IHsrIakGgeNFUvz5zpLOadh_vDH7Apqmv9E"
-download_sheet_name = "/gviz/tq?tqx=out:csv&sheet=master_dictionaries"
+g_sheet_id = f"{google_sheet_id}"
+download_sheet_name = (
+    f"/gviz/tq?tqx=out:csv&sheet={google_spread_sheet_sheet_name}"
+)
 url_name = common_g_sheet_link_format + g_sheet_id + download_sheet_name
 g_sheet_response = g_sheet_session.get(url_name)
 g_sheet_bytes_data = g_sheet_response.content
@@ -59,7 +64,6 @@ async def get_entity_data(entity: str):
     json_compatible_item_data = jsonable_encoder(
         entity_df.to_dict(orient="records")
     )
-    print(json_compatible_item_data)
     return JSONResponse(content=json_compatible_item_data)
 
 

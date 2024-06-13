@@ -16,14 +16,7 @@ from fastapi.logger import logger
 from fastapi.templating import Jinja2Templates
 
 from app.core.config import Settings
-
-# from app.models.date_strftime_pattern import DateStrftimePattern
 from app.models.enums import ExpectationResultFormat, ExpectationResultType
-
-# from app.models.expect_column_values_to_be_in_set import ColumnValuesToBeInSet
-# from app.models.general import GeneralTableExpectation
-# from app.models.regex_list_pattern import RegexMatchList
-# from app.models.regex_pattern import RegexPatternExpectation
 from app.utils.dataset import (
     datasets_expectation,
     datasets_expectation_from_url,

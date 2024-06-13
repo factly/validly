@@ -4,8 +4,6 @@ import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
 from app.core.config import TagsSettings
-
-# from app.utils.column_mapping import find_tags_columns
 from app.utils.column_mapping import find_metadata_columns
 from app.utils.common import modify_values_to_match_regex_list
 

@@ -8,6 +8,7 @@ from app.api.api_v1.routers.dictionary import dictionary_router
 from app.api.api_v1.routers.docs import docs_router
 from app.api.api_v1.routers.metadata import metadata_router
 from app.api.api_v1.routers.s3_checks import s3_router
+from app.api.api_v1.routers.session import session_router
 from app.core.config import Settings
 
 settings = Settings()
@@ -36,4 +37,7 @@ app.include_router(metadata_router, prefix="", tags=["Metadata"])
 app.include_router(docs_router, prefix="/docs", tags=["Documentation"])
 app.include_router(
     dictionary_router, prefix="/dictionary", tags=["Dictionary"]
+)
+app.include_router(
+    session_router, prefix="/session", tags=[]
 )

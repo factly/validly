@@ -38,6 +38,4 @@ app.include_router(docs_router, prefix="/docs", tags=["Documentation"])
 app.include_router(
     dictionary_router, prefix="/dictionary", tags=["Dictionary"]
 )
-app.include_router(
-    session_router, prefix="/session", tags=[]
-)
+app.include_router(session_router, prefix="/session", tags=[])

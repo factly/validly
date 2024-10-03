@@ -129,5 +129,22 @@ class GenericCustomExpectations(PandasDataset):
             .all()
         )
         boolean_list = pd.Series([boolean_list] * len(column_list))
+        return boolean_list
 
+    @MetaPandasDataset.multicolumn_map_expectation
+    def expect_index_not_in_column_values(
+        self,
+        column_list,
+        meta={
+            "expectation_name": "Column names should not have index as a column",
+        },
+        include_meta=True,
+        find_columns=False,
+    ):
+        boolean_list = (
+            pd.Series(column_list.columns)
+            .apply(lambda x: False if x == "index" else True)
+            .all()
+        )
+        boolean_list = pd.Series([boolean_list] * len(column_list))
         return boolean_list

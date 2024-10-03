@@ -319,6 +319,12 @@ class NoteSettings(BaseSettings):
 
 class CustomExpectationsSettings(BaseSettings):
 
+    INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_NAME: str = (
+        "Index not in Column Names"
+    )
+    INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_ERR_MSG: str = (
+        "Column names should not have index as a column"
+    )
     NULL_DATETIME_VALUE_NAME: str = "Null date values Flag - {column}"
     NULL_DATETIME_VALUE_MSG: str = (
         "Null values should not be permitted for datetime values"

@@ -337,7 +337,15 @@ async def column_names_expectation_suite(dataset, result_format):
         "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
         "expectation_name": custom_settings.COLUMN_NAMES_EXPECTATION_NAME,
         "expectation_error_message": custom_settings.COLUMN_NAMES_EXPECTATION_ERR_MSG.format(
-            column=dataset.columns.tolist()
+            column=list(
+                set(dataset.columns.tolist())
+                - set(
+                    [
+                        i.lower().replace(" ", "_")
+                        for i in dataset.columns.tolist()
+                    ]
+                )
+            )
         ),
     }
     response = {
@@ -367,7 +375,7 @@ async def index_not_in_columns_expectation_suite(dataset, result_format):
         "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
         "expectation_name": custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_NAME,
         "expectation_error_message": custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_ERR_MSG.format(
-            column=dataset.columns.tolist()
+            column=[i for i in dataset.columns.tolist() if i == "index"]
         ),
     }
     response = {

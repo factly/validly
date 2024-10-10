@@ -323,7 +323,7 @@ class CustomExpectationsSettings(BaseSettings):
         "Index not in Column Names"
     )
     INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_ERR_MSG: str = (
-        "Column names should not have index as a column"
+        "Column names should not have 'index' as a column so please rename - {column}"
     )
     NULL_DATETIME_VALUE_NAME: str = "Null date values Flag - {column}"
     NULL_DATETIME_VALUE_MSG: str = (
@@ -336,7 +336,7 @@ class CustomExpectationsSettings(BaseSettings):
         "Numeric values in specific pattern - {column}"
     )
     NUMERIC_EXPECTATION_ERR_MSG: str = (
-        "Numeric values should be in proper format both integer and float(roundoff to two decimal places)"
+        "Numeric values should be in proper format both integer and float(round-off to two decimal places)"
     )
 
     NEGATIVE_NUMERIC_VALUES_PATTERN = re.compile(r"^-\d+(\.\d{1,})?$")
@@ -350,7 +350,7 @@ class CustomExpectationsSettings(BaseSettings):
     COLUMN_NAMES_PATTERN = re.compile(r"^[a-z]+(?:_[a-z]+)*$")
     COLUMN_NAMES_EXPECTATION_NAME: str = "Column names in specific pattern"
     COLUMN_NAMES_EXPECTATION_ERR_MSG: str = (
-        "Column names should be in lower case and separated by underscore - {column}"
+        "Column names should be in lower case and separated by underscore - Example 'Sub Category' column should be written as 'sub_category' The improper columns list is: {column}"
     )
 
     TRAIL_OR_LEAD_WHITESPACE_PATTERN = re.compile(r"^\s+.*|.*\s+$")

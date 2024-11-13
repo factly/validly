@@ -337,7 +337,15 @@ async def column_names_expectation_suite(dataset, result_format):
         "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
         "expectation_name": custom_settings.COLUMN_NAMES_EXPECTATION_NAME,
         "expectation_error_message": custom_settings.COLUMN_NAMES_EXPECTATION_ERR_MSG.format(
-            column=dataset.columns.tolist()
+            column=list(
+                set(dataset.columns.tolist())
+                - set(
+                    [
+                        i.lower().replace(" ", "_")
+                        for i in dataset.columns.tolist()
+                    ]
+                )
+            )
         ),
     }
     response = {
@@ -351,6 +359,36 @@ async def column_names_expectation_suite(dataset, result_format):
     response[custom_settings.COLUMN_NAMES_EXPECTATION_NAME]["result"][
         "partial_unexpected_list"
     ] = []
+    return response
+
+
+async def index_not_in_columns_expectation_suite(dataset, result_format):
+    ge_pandas_dataset = ge.from_pandas(
+        dataset, dataset_class=GenericCustomExpectations
+    )
+    expectation = ge_pandas_dataset.expect_index_not_in_column_values(
+        column_list=dataset.columns.tolist(),
+        result_format=result_format,
+    )
+    expectation_dict = expectation.to_json_dict()
+    expectation_dict["expectation_config"]["meta"] = {
+        "cleaning_pdf_link": settings.DATA_CLEANING_GUIDE_LINK,
+        "expectation_name": custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_NAME,
+        "expectation_error_message": custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_ERR_MSG.format(
+            column=[i for i in dataset.columns.tolist() if i == "index"]
+        ),
+    }
+    response = {
+        expectation_dict["expectation_config"]["meta"][
+            "expectation_name"
+        ]: expectation_dict
+    }
+    response[custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_NAME][
+        "result"
+    ]["partial_unexpected_index_list"] = []
+    response[custom_settings.INDEX_NOT_IN_COLUMN_NAMES_EXPECTATION_NAME][
+        "result"
+    ]["partial_unexpected_list"] = []
     return response
 
 
@@ -407,6 +445,7 @@ async def general_table_expectation_suite(dataset, result_format):
         ],
         column_names_expectation_suite(dataset, result_format),
         observation_more_than_thresh_expectation_suite(dataset, result_format),
+        index_not_in_columns_expectation_suite(dataset, result_format),
     )
     expectations = ChainMap(*expectations)
     return expectations

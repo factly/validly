@@ -4,13 +4,10 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
-from app.core.config import APP_DIR, GeographySettings, Settings
+from app.api.api_v1.routers.dictionary import standard_data_values
+from app.core.config import GeographySettings, Settings
 from app.utils.column_mapping import find_geography_columns
-from app.utils.common import (
-    modify_values_to_be_in_set,
-    read_dataset,
-    read_pandas_dataset,
-)
+from app.utils.common import modify_values_to_be_in_set, read_dataset
 
 settings = Settings()
 geograhy_setting = GeographySettings()
@@ -19,7 +16,7 @@ geograhy_setting = GeographySettings()
 async def modify_city_expectation_suite(column_name: str, result_format: str):
     default_expectation_suite = geograhy_setting.STATE_EXPECTATION
 
-    city_dataset = await read_pandas_dataset(APP_DIR / "core" / "district.csv")
+    city_dataset = standard_data_values[["district"]].dropna().copy()
     city_list = city_dataset["districts"].tolist()
 
     changed_config = {
@@ -65,7 +62,7 @@ async def city_expectation_suite(dataset, result_format):
 async def modify_state_expectation_suite(column_name: str, result_format: str):
     default_expectation_suite = geograhy_setting.STATE_EXPECTATION
 
-    state_dataset = await read_pandas_dataset(APP_DIR / "core" / "state.csv")
+    state_dataset = standard_data_values[["state"]].dropna().copy()
     state_list = state_dataset["state"].tolist()
 
     changed_config = {
@@ -112,9 +109,7 @@ async def modify_country_expectation_suite(
 ):
     default_expectation_suite = geograhy_setting.COUNTRY_EXPECTATION
 
-    country_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "country.csv"
-    )
+    country_dataset = standard_data_values[["country"]].dropna().copy()
     country_list = country_dataset["country"].tolist()
 
     changed_config = {

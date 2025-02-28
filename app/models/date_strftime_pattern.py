@@ -4,69 +4,6 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-# class _Kwargs(BaseModel):
-#     column: str
-#     strftime_format: str
-#     result_format: str
-
-#     class Config:
-#         underscore_attrs_are_private = True
-
-# class ExpectationConfig(BaseModel):
-#     _expectation_type: str
-#     _kwargs: _Kwargs
-#     _raw_kwargs: Any
-#     meta: Dict[str, Any]
-#     success_on_last_run: Any
-#     _ge_cloud_id: Any
-#     _expectation_context: Any
-
-#     class Config:
-#         underscore_attrs_are_private = True
-
-# class PartialUnexpectedCount(BaseModel):
-#     value: str
-#     count: int
-
-#     class Config:
-#         underscore_attrs_are_private = True
-
-
-# class Result(BaseModel):
-#     element_count: Optional[int]
-#     missing_count: Optional[int]
-#     missing_percent: Optional[int]
-#     unexpected_count: Optional[int]
-#     unexpected_percent: Optional[int]
-#     unexpected_percent_total: Optional[int]
-#     unexpected_percent_nonmissing: Optional[int]
-#     partial_unexpected_list: Optional[List[str]]
-#     partial_unexpected_index_list: Optional[List[int]]
-#     partial_unexpected_counts: Optional[List[PartialUnexpectedCount]]
-#     unexpected_list: Optional[List[str]]
-#     unexpected_index_list: Optional[List[int]]
-
-
-# class ExceptionInfo(BaseModel):
-#     raised_exception: Optional[bool]
-#     exception_message: Optional[Any]
-#     exception_traceback: Optional[Any]
-
-#     class Config:
-#         underscore_attrs_are_private = True
-
-
-# class DateStrftimePattern(BaseModel):
-#     success: bool
-#     expectation_config: Optional[ExpectationConfig]
-#     result: Optional[Result]
-#     _meta: Optional[Dict[str, Any]]
-#     exception_info: Optional[ExceptionInfo]
-
-#     class Config:
-#         underscore_attrs_are_private = True
-#         # response_model_exclude_unset = True
-
 
 class _Kwargs(BaseModel):
     column: str

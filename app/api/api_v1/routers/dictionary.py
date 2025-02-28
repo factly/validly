@@ -1,4 +1,7 @@
+import io
+
 import pandas as pd
+import requests
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -11,14 +14,40 @@ settings = Settings()
 
 dictionary_router = router = APIRouter()
 
+# reading sheet name from env
+google_spread_sheet_sheet_name = settings.GOOGLE_SPREAD_SHEET_SHEET_NAME
+google_sheet_id = settings.GOOGLE_SHEET_ID
+
+g_sheet_session = requests.Session()
+common_g_sheet_link_format = "https://docs.google.com/spreadsheets/d/"
+g_sheet_id = f"{google_sheet_id}"
+download_sheet_name = (
+    f"/gviz/tq?tqx=out:csv&sheet={google_spread_sheet_sheet_name}"
+)
+url_name = common_g_sheet_link_format + g_sheet_id + download_sheet_name
+g_sheet_response = g_sheet_session.get(url_name)
+g_sheet_bytes_data = g_sheet_response.content
+data = pd.read_csv(io.StringIO(g_sheet_bytes_data.decode("utf-8")))
+
+standard_data_values = data.copy()
+standard_data_values.rename(
+    columns={
+        "country_standard_name": "country",
+        "unique_standard_airline_name": "airline",
+        "standard_disease_name": "diseases",
+        "psu_companies": "psu",
+        "standard_district_name": "district",
+        "standard_states": "state",
+        "insurance_standard_names": "insurance_companies",
+    },
+    inplace=True,
+)
+
 
 @router.get("/", summary="Get all Saved Entities csv file name")
 async def get_entity_names():
     # List down all the csv files present in the config folder
-    return [
-        csv_file.name.replace(".csv", "")
-        for csv_file in CORE_FOLDER.glob("**/*.csv")
-    ]
+    return data.columns.tolist()
 
 
 @router.get(
@@ -27,9 +56,9 @@ async def get_entity_names():
     response_class=JSONResponse,
 )
 async def get_entity_data(entity: str):
-    entity_df = pd.read_csv(CORE_FOLDER / f"{entity}.csv")
+    entity_df = data[[entity]].dropna()
     # to avoid json conversion error
-    entity_df = entity_df.fillna("")
+    # entity_df = entity_df.fillna("")
 
     # convert to json
     json_compatible_item_data = jsonable_encoder(

@@ -63,6 +63,12 @@ on-the-indian-economy/hbs-es-exhange-rate-inr-high-low-monthly/output.csv"""
     # Metadata File Parameters
     METADATA_COLUMN_ORDER_STRING = ""
 
+    # Google spread-sheet sheet name
+    GOOGLE_SPREAD_SHEET_SHEET_NAME: str = ""
+
+    # Google sheet id
+    GOOGLE_SHEET_ID: str = ""
+
     class Config:
         env_file = ".env"
 
@@ -502,26 +508,6 @@ class MetadataSettings(BaseSettings):
         ],
     }
 
-    # SHORT_FORM_EXPECTATION = {
-    #     "data_asset_type": None,
-    #     "expectation_suite_name": "short_form_expectation_suite",
-    #     "expectations": [
-    #         {
-    #             "expectation_type": "expect_column_values_to_be_in_set",
-    #             "kwargs": {
-    #                 "column": "short_form",
-    #                 "value_set": [],
-    #                 "result_format": "SUMMARY",
-    #             },
-    #             "meta": {
-    #                 "expectation_name": "Short Form in set of values",
-    #                 "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
-    #                 "expectation_error_message": "Short Form should be from the Data Dictionary",
-    #             },
-    #         }
-    #     ],
-    # }
-
     FREQUENCY_OF_UPDATE_EXPECTATION = {
         "data_asset_type": None,
         "expectation_suite_name": "frequency_of_update_expectation_suite",
@@ -595,25 +581,6 @@ class MetadataSettings(BaseSettings):
     TIME_SAVED_IN_HOURS_MSG: str = (
         "Null values should not present in these columns"
     )
-    # TIME_SAVED_IN_HOURS_EXPECTATION = {
-    #     "data_asset_type": None,
-    #     "expectation_suite_name": "time_saved_in_hours_expectation_suite",
-    #     "expectations": [
-    #         {
-    #             "expectation_type": "expect_column_values_to_be_in_set",
-    #             "kwargs": {
-    #                 "column": "time_saved_in_hours",
-    #                 "value_set": [],
-    #                 "result_format": "SUMMARY",
-    #             },
-    #             "meta": {
-    #                 "expectation_name": "Time Saved In Hours",
-    #                 "cleaning_pdf_link": "https://wp.me/ad1WQ9-dvg",
-    #                 "expectation_error_message": "Time Saved in Hours should be from the range of 2 to 6 hours",
-    #             },
-    #         }
-    #     ],
-    # }
 
 
 class TagsSettings(BaseSettings):

@@ -4,14 +4,14 @@ from collections import ChainMap
 import great_expectations as ge
 from fastapi.encoders import jsonable_encoder
 
-from app.core.config import APP_DIR, MetadataSettings, Settings
+from app.api.api_v1.routers.dictionary import standard_data_values
+from app.core.config import MetadataSettings, Settings
 from app.utils.column_mapping import find_metadata_columns
-from app.utils.common import (  # modify_column_order_expectation_suite,
+from app.utils.common import (
     modify_values_length_to_be_between,
     modify_values_to_be_in_set,
     modify_values_to_match_regex_list,
     read_dataset,
-    read_pandas_dataset,
 )
 from app.utils.general import general_metadata_expectation_suite
 from app.utils.tags import tags_expectation_suite
@@ -162,8 +162,8 @@ async def modify_sector_expectation_suite(
 
     default_expectation_suite = meta_data_setting.SECTOR_EXPECTATION
 
-    sector_dataset = await read_pandas_dataset(APP_DIR / "core" / "sector.csv")
-    sector_list = sector_dataset["sector"].tolist()
+    sector_dataset = standard_data_values[["sectors"]].dropna().copy()
+    sector_list = sector_dataset["sectors"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -222,10 +222,10 @@ async def modify_organization_expectation_suite(
 ):
     default_expectation_suite = meta_data_setting.ORGANIZATION_EXPECTATION
 
-    organization_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "organization.csv"
+    organization_dataset = (
+        standard_data_values[["organisation"]].dropna().copy()
     )
-    organization_list = organization_dataset["organization"].tolist()
+    organization_list = organization_dataset["organisation"].tolist()
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -275,7 +275,6 @@ async def organization_expectation_suite(dataset, result_format):
         + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
     )
     results[validation_ui_name] = validation
-    # print(jsonable_encoder(results))
     return jsonable_encoder(results)
 
 
@@ -284,10 +283,9 @@ async def modify_short_form_expectation_suite(
 ):
     default_expectation_suite = meta_data_setting.SHORT_FORM_EXPECTATION
 
-    short_form_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "short_form.csv"
-    )
-    short_form_list = short_form_dataset["short_form"].tolist()
+    # NOTE: Modify the short_form_expectation_suite to use short_form
+    short_form_dataset = {"short_form": ""}
+    short_form_list = short_form_dataset["short_form"]
 
     changed_config = {
         "expect_column_values_to_be_in_set": {
@@ -302,43 +300,6 @@ async def modify_short_form_expectation_suite(
     return changed_expectation_suite
 
 
-# async def short_form_expectation_suite(dataset, result_format):
-#     """Expectation to check if Short Form values are in short_form.csv
-
-#     Expectation is on whether every value present in short form column of metadata
-#     csv is in short_form.csv file or not
-
-#     Args:
-#         dataset (Dataframe): Read metadata csv using Pandas Dataframe
-#         result_format (str): SUMMARY
-
-#     Returns:
-#         Dict: Dictionary of Expectations
-#     """
-#     results = {}
-#     mapped_columns = await find_metadata_columns(set(dataset.columns))
-#     short_form_column = mapped_columns["short_form"][0]
-
-#     expectation_suite = await modify_short_form_expectation_suite(
-#         short_form_column, result_format
-#     )
-#     # convert pandas dataset to great_expectations dataset
-#     ge_pandas_dataset = ge.from_pandas(
-#         dataset, expectation_suite=expectation_suite
-#     )
-#     validation = ge_pandas_dataset.validate()
-#     validation_ui_name = (
-#         validation["results"][0]["expectation_config"]["meta"][
-#             "expectation_name"
-#         ]
-#         + " - "
-#         + validation["results"][0]["expectation_config"]["_kwargs"]["column"]
-#     )
-#     results[validation_ui_name] = validation
-
-#     return jsonable_encoder(results)
-
-
 async def modify_frequency_of_update_expectation_suite(
     column_name: str, result_format: str
 ):
@@ -346,8 +307,8 @@ async def modify_frequency_of_update_expectation_suite(
         meta_data_setting.FREQUENCY_OF_UPDATE_EXPECTATION
     )
 
-    frequency_of_update_dataset = await read_pandas_dataset(
-        APP_DIR / "core" / "frequency_of_update.csv"
+    frequency_of_update_dataset = (
+        standard_data_values[["frequency_of_update"]].dropna().copy()
     )
     frequency_of_update_list = frequency_of_update_dataset[
         "frequency_of_update"
@@ -571,7 +532,6 @@ async def metadata_expectation_suite(
     """
     if isinstance(dataset, str):
         dataset = await read_dataset(dataset)
-    # print(dir(dataset))
     # Dataset modification for sector expectation suite
     dataset_sector = dataset.copy()
     # explode the dataset based on sector column
@@ -585,7 +545,6 @@ async def metadata_expectation_suite(
         check_column_order(dataset),
         sector_expectation_suite(dataset_sector, result_format),
         organization_expectation_suite(dataset, result_format),
-        # short_form_expectation_suite(dataset, result_format),
         description_expectation_suite(dataset, result_format),
         dataset_name_for_factly_expectation_suite(dataset, result_format),
         unit_expectation_suite(dataset, result_format),

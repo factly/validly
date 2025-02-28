@@ -174,9 +174,7 @@ async def find_metadata_columns(columns: set):
     organization_pattern = re.compile(
         r".*({}).*".format(metadata_settings.ORGANIZATION_KEYWORD)
     )
-    # short_form_pattern = re.compile(
-    #     r".*({}).*".format(metadata_settings.SHORT_FORM_KEYWORD)
-    # )
+
     description_pattern = re.compile(
         r".*({}).*".format(metadata_settings.DESCRIPTION_KEYWORD)
     )
@@ -221,9 +219,7 @@ async def find_metadata_columns(columns: set):
     organization_column, columns = extract_pattern_from_columns(
         columns, organization_pattern
     )
-    # short_form_column, columns = extract_pattern_from_columns(
-    #     columns, short_form_pattern
-    # )
+
     description_column, columns = extract_pattern_from_columns(
         columns, description_pattern
     )
@@ -265,7 +261,6 @@ async def find_metadata_columns(columns: set):
     return {
         "sector": list(sector_column),
         "organization": list(organization_column),
-        # "short_form": list(short_form_column),
         "description": list(description_column),
         "tags": list(tags_column),
         "temporal_coverage": list(temporal_coverage_column),
@@ -275,7 +270,6 @@ async def find_metadata_columns(columns: set):
         "file_path": list(file_path_column),
         "frequency_of_update": list(frequency_of_update_column),
         "source_link": list(source_link_column),
-        # "archive":  list(archive_column),
         "spacial_coverage": list(spacial_coverage_column),
         "variable_measured": list(variable_measured_column),
         "data_next_update": list(data_next_update_column),
@@ -309,5 +303,4 @@ async def find_mapped_columns(columns):
             list(chain.from_iterable(mapped_columns.values()))
         )
     )
-    print({**mapped_columns, "unmapped": not_mapped_columns})
     return {**mapped_columns, "unmapped": not_mapped_columns}

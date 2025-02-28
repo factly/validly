@@ -61,7 +61,11 @@ async def find_datetime_columns(columns: set):
     month_pattern = re.compile(
         r".*({})".format(datetime_settings.MONTH_KEYWORD)
     )
-    date_pattern = re.compile(r".*({})".format(datetime_settings.DATE_KEYWORD))
+    date_pattern = re.compile(
+        r"^.*(?:^|_){}s?(?:_|$)|^.*(?:^|_){}(?:_|$)".format(
+            datetime_settings.DATE_KEYWORD, datetime_settings.DATE_KEYWORD
+        )
+    )
 
     fiscal_year_columns, columns = extract_pattern_from_columns(
         columns, non_cal_year_pattern

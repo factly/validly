@@ -18,7 +18,6 @@ services:
       "
     volumes:
       - .:/app
-      - /Users/paul/factly/factly-datasets/projects/assembly_elections/data/processed/assembly-elections/statistical-reports:/data
     env_file:
       - .env
     networks:
